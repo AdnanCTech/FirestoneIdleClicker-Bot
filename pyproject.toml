@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 dependencies = ["mss", "numpy", "pynput", "psutil"]
 
 [dependency-groups]
-dev = ["pytest"]
+dev = ["pytest", "pyinstaller"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
