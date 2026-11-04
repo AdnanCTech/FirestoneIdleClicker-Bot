@@ -70,8 +70,8 @@ def run(ctx: Ctx, cfg: Config) -> None:
     nav.click(ctx, atlas.RS_FIRESTONE_TREE, 1000)
     _park(ctx)
     for box in _done_buttons(ctx):
-        nav.click(ctx, _centre(box), 1500)
-        ctx.log("research: claimed")
+        if nav.safe_click(ctx, _centre(box), box, 1500):
+            ctx.log("research: claimed")
         _park(ctx)
     for _ in range(atlas.RS_MAX_STARTS):
         if _slots_full(ctx):

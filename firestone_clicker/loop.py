@@ -62,10 +62,20 @@ def run_cycle(ctx: Ctx, cfg: Config, only: str | None = None) -> bool:
     return nav.go_home(ctx)
 
 
-def main(ctx: Ctx, cfg: Config, once: str | None, single_cycle: bool = False) -> None:
+def main(
+    ctx: Ctx,
+    cfg: Config,
+    once: str | None,
+    single_cycle: bool = False,
+    window_ok: Callable[[], bool] = lambda: True,
+) -> bool:
+    """Run cycles until stopped. False means the bot gave up (window lost or stuck)."""
     failures = 0
     try:
         while True:
+            if not window_ok():
+                ctx.log("exit: game window gone or not in front")
+                return False
             if run_cycle(ctx, cfg, once):
                 failures = 0
             else:
@@ -73,10 +83,11 @@ def main(ctx: Ctx, cfg: Config, once: str | None, single_cycle: bool = False) ->
                 _diag(ctx, "home")
                 if failures >= MAX_HOME_FAILURES:
                     ctx.log(f"exit: go_home failed {MAX_HOME_FAILURES} cycles in a row")
-                    return
+                    return False
             if once is not None or single_cycle:
-                return
+                return True
             ctx.log(f"cycle done, sleeping {cfg.delay_s}s")
             ctx.sleep(cfg.delay_s * 1000)
     except Stopped:
         ctx.log("exit: stop requested")
+        return True

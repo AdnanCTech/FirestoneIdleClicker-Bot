@@ -54,6 +54,28 @@ def test_loop_exits_after_three_home_failures(monkeypatch):
     assert c.logs[-1].startswith("exit: go_home failed 3")
 
 
+def test_main_exits_when_window_check_fails(monkeypatch):
+    calls = []
+    monkeypatch.setattr(loop, "FEATURES", [("a", lambda c, f: calls.append("a"))])
+    cfg = Config()
+    cfg.features["a"] = True
+    c = FakeCtx([_home_ok()] * 20)
+    assert loop.main(c, cfg, once=None, window_ok=lambda: False) is False
+    assert calls == [] and c.logs[-1].startswith("exit: game window")
+
+
+def test_main_returns_false_after_home_failures(monkeypatch):
+    monkeypatch.setattr(loop, "FEATURES", [])
+    cfg = Config()
+    cfg.delay_s = 0
+    assert loop.main(FakeCtx([blank()] * 200), cfg, once=None) is False
+
+
+def test_main_returns_true_after_once(monkeypatch):
+    monkeypatch.setattr(loop, "FEATURES", [("a", lambda c, f: None)])
+    assert loop.main(FakeCtx([_home_ok()] * 20), Config(), once="a") is True
+
+
 def test_guild_entry_gated_by_any_of_three(monkeypatch):
     cfg = Config()
     for k in ("expeditions", "awaken", "ptree"):

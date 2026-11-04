@@ -35,8 +35,19 @@ def main() -> int:
         return 2
     install_hotkey(ctx.stop)
     ctx.log(f"connected, client offset {ctx.offset}, dry_run={args.dry_run}. Win+Esc stops.")
-    loop.main(ctx, cfg, once=args.once, single_cycle=args.dry_run)
-    return 0
+
+    def window_ok() -> bool:
+        # The game must be the foreground window: pynput sends to whatever has focus.
+        hwnd = win.find_game_window()
+        if hwnd is None:
+            return False
+        if not win.is_foreground(hwnd):
+            win.activate(hwnd)
+            ctx.sleep(500)
+        return win.is_foreground(hwnd)
+
+    ok = loop.main(ctx, cfg, once=args.once, single_cycle=args.dry_run, window_ok=window_ok)
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

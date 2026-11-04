@@ -25,6 +25,15 @@ def test_claims_done_slot():
     assert _in_band(c.clicks, 600, 930, 760, 990)
 
 
+def test_claim_with_gem_is_skipped():
+    s = _library()
+    paint(s, (600, 930, 760, 990), 0x0AA008)
+    paint(s, (670, 950, 690, 970), 0xC040E0)
+    c = FakeCtx([s] * 10)
+    research.run(c, Config())
+    assert not _in_band(c.clicks, 600, 930, 760, 990)
+
+
 def test_starts_available_box_free_only():
     s = _library()
     paint(s, (225, 224, 608, 325), 0x0D49DE)  # available box
