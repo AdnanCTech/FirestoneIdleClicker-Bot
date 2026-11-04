@@ -29,13 +29,17 @@ jobs:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       - run: uv sync
       - run: uv run pyinstaller --noconfirm --clean FirestoneClicker.spec
-      - name: zip
+      - name: zip and release notes
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}".TrimStart("v")
           uv run python -c "from firestone_clicker.paths import DEFAULT_SETTINGS; open('dist/settings.toml', 'w', encoding='utf-8').write(DEFAULT_SETTINGS)"
           Compress-Archive -Path dist/FirestoneClicker.exe, dist/settings.toml, README.md, LICENSE -DestinationPath "dist/FirestoneClicker-$version-win64.zip"
+          # The release body is the CHANGELOG section for this version; no section, no release.
+          $m = [regex]::Match((Get-Content CHANGELOG.md -Raw), "(?ms)^## $([regex]::Escape($version))\b.*?(?=^## |\z)")
+          if (-not $m.Success) { throw "CHANGELOG.md has no '## $version' section" }
+          Set-Content -Path dist/notes.md -Value $m.Value.Trim() -NoNewline
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: dist/FirestoneClicker-*-win64.zip
-          generate_release_notes: true
+          body_path: dist/notes.md
