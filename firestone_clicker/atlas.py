@@ -121,6 +121,83 @@ GUARDIAN_TRAIN_READY = Probe(1199, 766, 1257, 810, GREEN_BUTTON, 3, "guardian_tr
 GUARDIAN_TRAIN_BUTTON = Point(1138, 787)
 GUARDIAN_TRAIN_RECT = (1038, 762, 1238, 812)
 
+# Alchemist (via town). Fields: idle marker, done (green), free speed-up (orange), running
+# timer (brown), collect point, start point, button body rect.
+TOWN_ALCHEMIST = Point(511, 837)
+ALCHEMY_PARK = TOWN_ALCHEMIST
+ALCHEMY_BUTTON_ORANGE_MIN = 0.15
+ALCHEMY_GEM_MAX = 60 / 12950
+
+
+@dataclass(frozen=True)
+class AlchemySlot:
+    key: str
+    not_running: Probe
+    complete: Probe
+    free: Probe
+    in_progress: Probe
+    collect: Point
+    start: Point
+    button: tuple[int, int, int, int]
+
+
+ALCHEMY_SLOTS = (
+    AlchemySlot(
+        "dragon_blood",
+        Probe(928, 519, 948, 535, 0xFFC700, 3, "alch_blood_idle"),
+        Probe(985, 746, 1037, 792, GREEN_BUTTON, 3, "alch_blood_done"),
+        Probe(969, 742, 1026, 756, ORANGE_1, 3, "alch_blood_free"),
+        Probe(1007, 735, 1030, 766, 0x916A38, 3, "alch_blood_running"),
+        Point(949, 777),
+        Point(951, 771),
+        (848, 755, 1033, 825),
+    ),
+    AlchemySlot(
+        "strange_dust",
+        Probe(1274, 515, 1298, 537, 0xFFC700, 3, "alch_dust_idle"),
+        Probe(1336, 748, 1386, 789, GREEN_BUTTON, 3, "alch_dust_done"),
+        Probe(1336, 748, 1386, 789, ORANGE_1, 3, "alch_dust_free"),
+        Probe(1346, 734, 1373, 766, 0x916A38, 3, "alch_dust_running"),
+        Point(1286, 786),
+        Point(1286, 786),
+        (1196, 755, 1381, 825),
+    ),
+    AlchemySlot(
+        "exotic_coins",
+        Probe(1622, 518, 1645, 538, 0xFFC700, 3, "alch_coin_idle"),
+        Probe(1679, 748, 1735, 796, GREEN_BUTTON, 3, "alch_coin_done"),
+        Probe(1679, 748, 1735, 796, ORANGE_1, 3, "alch_coin_free"),
+        Probe(1699, 737, 1723, 767, 0x916A38, 3, "alch_coin_running"),
+        Point(1632, 772),
+        Point(1641, 767),
+        (1544, 755, 1729, 825),
+    ),
+)
+
+# Research (library, via town). Minimal: claim green slot buttons, start any available box.
+TOWN_LIBRARY = Point(329, 657)
+RS_FIRESTONE_TREE = Point(1816, 610)
+RS_PARK = Point(1300, 60)
+RS_SLOT_STRIP = (60, 880, 1450, 1010)
+RS_SLOT_DONE_VAR = 25
+RS_BUTTON_MIN_W = 40
+RS_BUTTON_MIN_H = 25
+RS_TREE_AREA = (40, 110, 1725, 860)
+RS_AVAILABLE = 0x1D49DE
+RS_AVAILABLE_VAR = 32
+RS_BOX_MIN_W = 140
+RS_BOX_MIN_H = 60
+RS_POPUP_BUTTON_BAND = (620, 630, 980, 860)
+RS_POPUP_BUTTON_MIN_W = 200
+RS_POPUP_X_BAND = (1170, 160, 1300, 340)
+RS_POPUP_CLOSE_X = Probe(1215, 200, 1263, 248, DIALOG_RING, 30, "rs_popup_close_x")
+RS_POPUP_CLOSE = Point(1239, 224)
+RS_POPUP_OUTSIDE = Point(100, 150)
+RS_SLOTS_FULL_X = Probe(1346, 331, 1394, 379, DIALOG_RING, 30, "rs_slots_full_x")
+RS_SLOTS_FULL_CREAM = Probe(1090, 641, 1110, 661, 0xE8D1B7, 25, "rs_slots_full_cream")
+RS_SLOTS_FULL_CLOSE = Point(1370, 355)
+RS_MAX_STARTS = 2
+
 PTREE_NODES = (
     ("AttDmg", Point(365, 313)),
     ("AttHp", Point(512, 276)),

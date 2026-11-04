@@ -40,6 +40,15 @@ def gem_share(img: np.ndarray) -> float:
     return float(m.mean()) if m.size else 0.0
 
 
+def grey_share(img: np.ndarray) -> float:
+    """Share of mid-grey pixels (a disabled / unaffordable button)."""
+    px = img[:, :, :3].astype(np.int16)
+    spread = px.max(axis=2) - px.min(axis=2)
+    mean = px.mean(axis=2)
+    m = (spread < 18) & (mean > 60) & (mean < 200)
+    return float(m.mean()) if m.size else 0.0
+
+
 def color_boxes(
     img: np.ndarray,
     origin: tuple[int, int],
