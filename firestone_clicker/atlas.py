@@ -51,3 +51,10 @@ IDLE_TROOP = 0x542710
 AWAKEN_GREEN = 0x0A9F05
 DIALOG_RING = 0xFF6109
 DIALOG_X_CROSS = 0xFFF9CE
+
+# Navigation. BIG_CLOSE is a dialog's X; on the main screen that spot is the settings gear.
+BIG_CLOSE = Point(1851, 84)
+SETTINGS_CLOSE = Point(1725, 116)
+MM_SETTINGS_OPEN = Probe(1542, 655, 1654, 687, 0x285483, 3, "mm_settings_open")
+DIALOG_CLOSE_X = Probe(1849, 81, 1858, 90, DIALOG_X_CROSS, 30, "dialog_close_x")
+TOWN_OPEN = Probe(35, 447, 65, 465, 0xF6C100, 12, "town_open")

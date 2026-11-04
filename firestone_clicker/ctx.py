@@ -58,6 +58,24 @@ class LiveCtx(Ctx):
     def attach(self, client: win.Rect) -> None:
         self.offset = (client[0] - atlas.REF_ORIGIN[0], client[1] - atlas.REF_ORIGIN[1])
 
+    @classmethod
+    def connect(cls, dry_run: bool = False) -> "LiveCtx":
+        """Find, focus and maximize the game, then return a context bound to its client area."""
+        hwnd = win.find_game_window()
+        if hwnd is None:
+            raise win.BadWindow("Firestone.exe window not found")
+        win.activate(hwnd)
+        ctx = cls(dry_run=dry_run)
+        ctx.hwnd = hwnd
+        ctx.attach(win.maximize(hwnd))
+        return ctx
+
+    def save_png(self, path: str) -> None:
+        import mss.tools
+
+        img = self.grab((0, atlas.REF_ORIGIN[1], 1919, atlas.REF_ORIGIN[1] + atlas.REF_SIZE[1] - 1))
+        mss.tools.to_png(img[:, :, [2, 1, 0]].tobytes(), (img.shape[1], img.shape[0]), output=path)
+
     def _screen(self, x: int, y: int) -> tuple[int, int]:
         return x + self.offset[0], y + self.offset[1]
 

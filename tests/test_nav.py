@@ -19,6 +19,18 @@ def test_go_home_gives_up():
     assert len(c.clicks) <= 10
 
 
+def test_go_home_ignores_orange_art():
+    # An orange roof with a cream wall inside must not be mistaken for a dialog X.
+    s0 = blank()
+    paint(s0, (600, 180, 700, 240), 0xFF6109)
+    paint(s0, (630, 200, 670, 220), 0xFFF9CE)
+    s1 = blank()
+    paint(s1, atlas.MM_SETTINGS_OPEN.rect, 0x285483)
+    c = FakeCtx([s0, s1])
+    assert nav.go_home(c) is True
+    assert c.clicks == [(1851, 84), (1725, 116)]
+
+
 def test_safe_click_skips_gem():
     s = blank()
     paint(s, (100, 100, 200, 150), 0x0AA008)
