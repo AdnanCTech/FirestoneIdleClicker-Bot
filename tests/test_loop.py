@@ -76,6 +76,18 @@ def test_main_returns_true_after_once(monkeypatch):
     assert loop.main(FakeCtx([_home_ok()] * 20), Config(), once="a") is True
 
 
+def test_ctrl_c_exits_cleanly(monkeypatch):
+    def interrupt(c, f):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(loop, "FEATURES", [("a", interrupt)])
+    cfg = Config()
+    cfg.features["a"] = True
+    c = FakeCtx([_home_ok()] * 5)
+    assert loop.main(c, cfg, once=None) is True
+    assert c.logs[-1] == "exit: Ctrl+C"
+
+
 def test_guild_entry_gated_by_any_of_three(monkeypatch):
     cfg = Config()
     for k in ("expeditions", "awaken", "ptree"):

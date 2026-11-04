@@ -92,3 +92,6 @@ def main(
     except Stopped:
         ctx.log("exit: stop requested")
         return True
+    except KeyboardInterrupt:
+        ctx.log("exit: Ctrl+C")
+        return True
