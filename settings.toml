@@ -5,7 +5,7 @@ delay_s = 60
 [features]
 expeditions = true
 awaken = true
-ptree = true
+ptree = false
 map_missions = true
 alchemist = true
 research = true
@@ -17,7 +17,7 @@ oracle = true
 [alchemist]
 dragon_blood = true
 strange_dust = true
-exotic_coins = true
+exotic_coins = false
 
 # Which slots in the U menu to upgrade when their button is green.
 [heroes]
