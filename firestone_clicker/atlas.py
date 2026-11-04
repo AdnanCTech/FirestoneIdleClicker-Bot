@@ -69,3 +69,77 @@ HERO_UPGRADE_SLOTS = (
     ("h1", (1862, 434, 1888, 469), Point(1670, 427)),
     ("guardian", (1869, 319, 1890, 352), Point(1670, 317)),
 )
+
+# Guild screen.
+MAIN_GUILD_ICON = Point(1857, 481)
+GUILD_EXPEDITION_DOT = Probe(450, 410, 380, 490, RED_DOT, RED_DOT_VAR, "guild_expedition_dot")
+GUILD_EXPEDITIONS = Point(308, 406)
+GUILD_EXPEDITION_START = Point(1321, 331)
+GUILD_EXPEDITION_START_RECT = (1221, 306, 1421, 356)
+GUILD_PTREE_ENTRY = Point(1560, 366)
+
+# Awakening (from the guild screen).
+AWAKEN_DOT = Probe(1107, 745, 1367, 944, RED_DOT, RED_DOT_VAR, "awaken_dot")
+AWAKEN_OPEN = Point(1192, 847)
+AWAKEN_X1 = Point(1577, 400)
+AWAKEN_BUTTON_ORANGE = Probe(1600, 566, 1845, 612, 0xF4A044, 1, "awaken_button_orange")
+AWAKEN_BUTTON_GREEN = Probe(1600, 566, 1845, 612, AWAKEN_GREEN, 1, "awaken_button_green")
+AWAKEN_BUTTON = Point(1725, 582)
+AWAKEN_BUTTON_RECT = (1600, 566, 1845, 612)
+AWAKEN_AUTO_READY = Probe(1650, 955, 1900, 1015, AWAKEN_GREEN, 1, "awaken_auto_ready")
+AWAKEN_AUTO = Point(1774, 993)
+AWAKEN_AUTO_RECT = (1650, 955, 1900, 1015)
+AWAKEN_MULTIPLIERS = (  # highest first: (probe, button)
+    (Probe(1825, 632, 1910, 692, AWAKEN_GREEN, 1, "awaken_x160"), Point(1872, 666)),
+    (Probe(1727, 632, 1815, 692, AWAKEN_GREEN, 1, "awaken_x80"), Point(1772, 666)),
+    (Probe(1630, 632, 1716, 692, AWAKEN_GREEN, 1, "awaken_x40"), Point(1679, 666)),
+    (Probe(1535, 632, 1615, 692, AWAKEN_GREEN, 1, "awaken_x20"), Point(1577, 666)),
+    (Probe(1825, 365, 1910, 423, AWAKEN_GREEN, 1, "awaken_x10"), Point(1872, 400)),
+    (Probe(1727, 365, 1815, 423, AWAKEN_GREEN, 1, "awaken_x5"), Point(1772, 400)),
+    (Probe(1630, 365, 1716, 423, AWAKEN_GREEN, 1, "awaken_x2"), Point(1679, 400)),
+    (Probe(1535, 365, 1615, 423, AWAKEN_GREEN, 1, "awaken_x1"), Point(1577, 400)),
+)
+
+# Personal tree (from the guild screen). Measured live 2026-11-04: a node opens a blue popup
+# with a green "Buy upgrade" button; without tokens a cream "You need N more Expedition
+# token" popup appears whose green "Get more" overlaps the buy point, so it is probed and closed.
+PTREE_OPEN = Point(1823, 945)
+PTREE_POPUP = Probe(680, 430, 720, 470, 0x295484, 6, "ptree_popup")
+PTREE_POPUP_CLOSE = Point(1239, 284)
+PTREE_BUY = Point(960, 686)
+PTREE_BUY_RECT = (840, 645, 1080, 730)
+PTREE_NEED_MORE = Probe(680, 560, 720, 590, 0xFAF3E1, 8, "ptree_need_more")
+PTREE_NEED_MORE_CLOSE = Point(1283, 349)
+# Guardian (Magic Quarter, via town).
+TOWN_MAGIC_QUARTER = Point(658, 284)
+GUARDIAN_EVOLVE_DOT = Probe(1307, 107, 1346, 136, RED_DOT, RED_DOT_VAR, "guardian_evolve_dot")
+GUARDIAN_EVOLVE_TAB = Point(1200, 165)
+GUARDIAN_EVOLVE_BUTTON = Point(1117, 750)
+GUARDIAN_EVOLVE_RECT = (1017, 725, 1217, 775)
+GUARDIAN_BACK_TAB = Point(1049, 171)
+GUARDIAN_TRAIN_READY = Probe(1199, 766, 1257, 810, GREEN_BUTTON, 3, "guardian_train_ready")
+GUARDIAN_TRAIN_BUTTON = Point(1138, 787)
+GUARDIAN_TRAIN_RECT = (1038, 762, 1238, 812)
+
+PTREE_NODES = (
+    ("AttDmg", Point(365, 313)),
+    ("AttHp", Point(512, 276)),
+    ("AttArm", Point(687, 367)),
+    ("Energy", Point(353, 492)),
+    ("Mana", Point(511, 442)),
+    ("Rage", Point(687, 534)),
+    ("Miner", Point(858, 199)),
+    ("Battle", Point(1061, 205)),
+    ("MainAtt", Point(957, 365)),
+    ("Prest", Point(963, 536)),
+    ("Fire", Point(860, 696)),
+    ("Gold", Point(1059, 701)),
+    ("Level", Point(849, 866)),
+    ("Guard", Point(1063, 867)),
+    ("Fist", Point(1235, 369)),
+    ("Prec", Point(1399, 276)),
+    ("Magic", Point(1567, 320)),
+    ("Tank", Point(1233, 535)),
+    ("Damage", Point(1404, 440)),
+    ("Heal", Point(1572, 492)),
+)
