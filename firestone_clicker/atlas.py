@@ -198,6 +198,26 @@ RS_SLOTS_FULL_CREAM = Probe(1090, 641, 1110, 661, 0xE8D1B7, 25, "rs_slots_full_c
 RS_SLOTS_FULL_CLOSE = Point(1370, 355)
 RS_MAX_STARTS = 2
 
+# World map missions (M key). The map must stay at its default position and zoom.
+MR_FREE_RESET = Probe(221, 878, 277, 891, ORANGE_2, 3, "mr_free_reset")
+MR_FREE_RESET_BUTTON = Point(173, 918)
+MR_REFRESH_RECT = (95, 869, 297, 976)
+MR_NO_MISSIONS = Probe(117, 249, 208, 334, 0x1452B4, 3, "mr_no_missions")
+MR_MISSION_DONE = Probe(207, 305, 244, 348, GREEN_BUTTON, 3, "mr_mission_done")
+MR_FIRST_MISSION = Point(162, 334)
+MAP_POPUP_BAND = (300, 150, 1620, 900)
+MAP_POPUP_OUTSIDE = Point(1700, 540)
+MAP_MAX_COLLECT = 10
+MAP_MAX_STARTS = 15
+# Measured live 2026-11-04. "Your squads are idling!" banner at the bottom (brown text) means
+# a squad is free. An available mission is a scroll icon with a teal ring; in-progress icons
+# are pink (sword) or green (telescope). The reference bot's fixed spot list did not line up.
+MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
+MAP_ICON_AREA = (300, 100, 1700, 940)
+# (colour, variation, min box px): pink sword circle, cyan scroll ring, orange dragon body.
+MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12))
+MAP_ICON_MERGE = 45
+
 PTREE_NODES = (
     ("AttDmg", Point(365, 313)),
     ("AttHp", Point(512, 276)),

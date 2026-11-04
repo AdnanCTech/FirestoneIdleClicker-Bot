@@ -24,6 +24,17 @@ def test_green_boxes_two_side_by_side():
     assert len(boxes) == 2 and boxes[0][0] == 100 and boxes[1][0] == 400
 
 
+def test_blobs_separate_stacked_icons():
+    img = blank()
+    paint(img, (100, 100, 150, 150), 0xF07070)
+    paint(img, (110, 300, 160, 350), 0xF07070)  # same columns, lower down
+    paint(img, (500, 100, 505, 105), 0xF07070)  # too small
+    found = sorted(vision.blobs(img, (0, 0), 0xF07070, 24, 30))
+    assert len(found) == 2
+    assert 95 <= found[0][0] <= 100 and 95 <= found[0][1] <= 100
+    assert 295 <= found[1][1] <= 300
+
+
 def test_gem_share_purple_vs_green():
     g = blank()[0:10, 0:10].copy()
     paint(g, (0, 0, 9, 9), 0x0AA008)

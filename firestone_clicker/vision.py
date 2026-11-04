@@ -84,6 +84,49 @@ def color_boxes(
     return out
 
 
+def blobs(
+    img: np.ndarray,
+    origin: tuple[int, int],
+    color: int,
+    var: int,
+    min_px: int,
+    cell: int = 8,
+    cell_fill: float = 0.3,
+) -> list[Rect]:
+    """Logical bounding rects of connected colour blobs (cell grid + flood fill).
+
+    Unlike color_boxes this separates blobs that share columns, e.g. icons stacked on a map.
+    """
+    mask = match_mask(img, color, var)
+    h, w = mask.shape
+    gh, gw = h // cell, w // cell
+    if not gh or not gw:
+        return []
+    cells = mask[: gh * cell, : gw * cell].reshape(gh, cell, gw, cell).mean(axis=(1, 3)) >= cell_fill
+    seen = np.zeros_like(cells, dtype=bool)
+    ox, oy = origin
+    out: list[Rect] = []
+    for sy, sx in zip(*np.nonzero(cells)):
+        if seen[sy, sx]:
+            continue
+        stack = [(sy, sx)]
+        seen[sy, sx] = True
+        ys, xs = [], []
+        while stack:
+            y, x = stack.pop()
+            ys.append(y)
+            xs.append(x)
+            for ny, nx in ((y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)):
+                if 0 <= ny < gh and 0 <= nx < gw and cells[ny, nx] and not seen[ny, nx]:
+                    seen[ny, nx] = True
+                    stack.append((ny, nx))
+        x1, x2 = int(min(xs)) * cell, (int(max(xs)) + 1) * cell - 1
+        y1, y2 = int(min(ys)) * cell, (int(max(ys)) + 1) * cell - 1
+        if x2 - x1 + 1 >= min_px and y2 - y1 + 1 >= min_px:
+            out.append((ox + x1, oy + y1, ox + x2, oy + y2))
+    return out
+
+
 def green_boxes(
     img: np.ndarray, origin: tuple[int, int], min_w: int = 100, min_h: int = 25, var: int = 30
 ) -> list[Rect]:
