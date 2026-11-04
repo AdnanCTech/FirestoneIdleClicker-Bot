@@ -1,8 +1,8 @@
 # FirestoneClicker
 
-A small bot that keeps Firestone Idle RPG progressing while you are away. It looks at the
-screen and clicks, like a player would. It never spends gems, never drags the map, and never
-reads game memory or talks to the network.
+A small bot that keeps "Firestone - Idle Clicker Online RPG" progressing while you are away.
+It looks at the screen and clicks, like a player would. It never spends gems, never drags the
+map, and never reads game memory or talks to the network.
 
 ## What it does, each cycle
 

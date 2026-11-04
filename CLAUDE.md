@@ -1,6 +1,6 @@
 # FireStoneClicker
 
-Minimal Windows bot for Firestone Idle RPG (Epic build). Pixel probes + simulated input, no
+Minimal Windows bot for "Firestone - Idle Clicker Online RPG" (Epic build). Pixel probes + simulated input, no
 OCR, no GUI, no relaunch. Replaces the bloated Lutakh/firestone-bot with only what the owner
 needs. Design: `docs/superpowers/specs/2026-11-04-firestone-clicker-design.md`. Build plan and
 ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `diag/sdd-ledger.md`.
