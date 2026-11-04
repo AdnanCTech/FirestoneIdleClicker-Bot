@@ -5,11 +5,25 @@ OCR, no GUI, no relaunch. Replaces the bloated Lutakh/firestone-bot with only wh
 needs. Design: `docs/superpowers/specs/2026-11-04-firestone-clicker-design.md`. Build plan and
 ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `diag/sdd-ledger.md`.
 
+## Repo / release
+- Public repo: https://github.com/AdnanCTech/FirestoneIdleClicker-Bot (MIT, credits
+  Lutakh/firestone-bot). Repo name differs from the exe name on purpose; leave both.
+- Users get `FirestoneClicker-<version>-win64.zip` from Releases (exe + default `settings.toml`
+  + README + LICENSE). First release v0.1.0 on 2026-11-04, CI-built zip verified on the live game.
+- `.github/workflows/release.yml`: every push runs pytest; a `v*` tag also builds the exe with
+  PyInstaller and attaches the zip. Actions are pinned to commit SHAs.
+- To release: bump `__version__` in `firestone_clicker/__init__.py`, commit, `git tag -a vX.Y.Z`,
+  `git push origin main vX.Y.Z`. `.\build.ps1` does the same build locally into `dist/`.
+- The shipped `settings.toml` is generated from `paths.DEFAULT_SETTINGS` (generic defaults).
+  The repo-root `settings.toml` is the owner's personal config and is not shipped.
+- No `gh` CLI on this machine; check runs with the public API
+  (`api.github.com/repos/AdnanCTech/FirestoneIdleClicker-Bot/actions/runs`).
+
 ## Run / test
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (62 tests, ~3 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (72 tests, ~3 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
