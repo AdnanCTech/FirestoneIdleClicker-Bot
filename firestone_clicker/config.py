@@ -13,6 +13,7 @@ FEATURE_KEYS = (
     "research",
     "heroes",
     "guardian",
+    "oracle",
 )
 ALCHEMIST_KEYS = ("dragon_blood", "strange_dust", "exotic_coins")
 HERO_KEYS = ("h1", "h2", "h3", "h4", "h5", "guardian", "special")

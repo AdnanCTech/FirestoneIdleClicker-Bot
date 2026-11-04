@@ -96,6 +96,8 @@ Win+Esc sets a stop event polled every 0.1 s by every sleep. If the game window 
 
 **Research**. `require_screen((329,657), via_town=True)`, click `(1816,610)` settle 1 s. Park at `(1300,60)`. Claim: find green blobs (`0x0AA008`/`0x16BC15` ±25, min 40x25) in `(60,880,1450,1010)`, click each, settle 1.5 s. Start: find the first dark-blue box (`0x1D49DE` ±32) in `(40,110,1725,860)` without scrolling, click centre, wait up to 2 s, click the left-most green box ≥200 px wide in `(620,630,980,860)` if no gem, else close via `Probe(1215,200,1263,248,0xFF6109,30)` → `(1239,224)` or tap `(100,150)`. Handle "slots full" (`Probe(1346,331,1394,379,0xFF6109,30)` + `Probe(1090,641,1110,661,0xE8D1B7,25)` → click `(1370,355)`). Max 2 starts per visit. big_close.
 
+**Oracle rituals** (added 2026-11-04 after the first release). `require_screen((1023,994), via_town=True)`, click the Rituals tab `(828,436)`. For each of the four card button rects: if a green button ≥100 px wide is there (Claim or Start, both free), `safe_click` it; if a reward popup's green Okay then shows in `(700,560,1250,760)`, press it. big_close. Config key `features.oracle`.
+
 **Heroes** (classic). Press `u`, sleep 1.5 s. For each enabled slot in `HERO_UPGRADE_SLOTS` (7 entries, verbatim): if `GREEN_BUTTON` ±3 in rect, click point once. big_close. No next-milestone mode.
 
 **Guardian**. `require_screen((658,284), via_town=True)`, sleep 1 s. Evolve: if `Probe(1307,107,1346,136,RED_DOT,32)`: click `(1200,165)`, click `(1117,750)` settle 10.5 s, click `(1049,171)`. Train: if `Probe(1199,766,1257,810,0x0AA008,3)`: hold Left 2 s, press Right (guardian-1) times, click `(1138,787)`. big_close.

@@ -11,6 +11,7 @@ alchemist = true
 research = true
 heroes = true
 guardian = true
+oracle = true
 
 # Which alchemist experiments to start.
 [alchemist]

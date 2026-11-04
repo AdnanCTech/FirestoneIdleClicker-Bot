@@ -218,6 +218,18 @@ MAP_ICON_AREA = (300, 100, 1700, 940)
 MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12))
 MAP_ICON_MERGE = 45
 
+# Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with
+# one button: grey "Claimed", green "Start" (free), green "Claim", or a timer while running.
+TOWN_ORACLE = Point(1023, 994)
+ORACLE_RITUALS_TAB = Point(828, 436)
+ORACLE_RITUAL_BUTTONS = (
+    (985, 470, 1355, 548),
+    (1390, 470, 1760, 548),
+    (985, 812, 1355, 890),
+    (1390, 812, 1760, 890),
+)
+ORACLE_POPUP_BAND = (700, 560, 1250, 760)  # a reward popup's Okay lands here, between the card rows
+
 PTREE_NODES = (
     ("AttDmg", Point(365, 313)),
     ("AttHp", Point(512, 276)),
