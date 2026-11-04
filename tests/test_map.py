@@ -152,3 +152,20 @@ def test_priority_icons_come_first_then_the_rest_top_down():
     got = map_missions.available_icons(FakeCtx([s]))
     want = [(1200, 800), (1000, 600), (1300, 350), (600, 300), (700, 500)]
     assert len(got) == len(want) and all(abs(gx - wx) <= 4 and abs(gy - wy) <= 4 for (gx, gy), (wx, wy) in zip(got, want))
+
+
+def test_stand_cut_off_by_the_idle_banner_still_counts():
+    # Measured live 2026-11-04: the naval icon's stand at y 964..975 is half hidden by the
+    # "squads are idling" banner, exactly when there is something to start. Only its top 7 rows
+    # show, which is under the normal pixel minimum.
+    s = _map()
+    paint(s, (1040 - 25, 929 - 25, 1040 + 25, 929 + 25), 0x135696)
+    paint(s, (1032, 964, 1047, 971), 0xE6DDB5)
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(1040, 929)])
+
+
+def test_tiny_beige_specks_are_not_icons():
+    s = _map()
+    paint(s, (800, 500, 806, 506), 0xE6DDB5)  # 7x7 speck, as seen on the mountains
+    paint(s, (1460, 360, 1470, 366), 0xE6DDB5)  # 11x7 sliver away from the bottom edge
+    assert map_missions.available_icons(FakeCtx([s])) == []

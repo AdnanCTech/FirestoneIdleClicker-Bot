@@ -56,7 +56,9 @@ def available_icons(ctx: Ctx) -> list[tuple[int, int]]:
     color, var, min_px = atlas.MAP_ICON_STAND
     img = ctx.grab(area)
     found: list[tuple[int, int, int]] = []
-    for x1, y1, x2, _ in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
+    for x1, y1, x2, y2 in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
+        if x2 - x1 < atlas.MAP_ICON_STAND_MIN or (y2 - y1 < atlas.MAP_ICON_STAND_MIN and y2 < area[3] - 4):
+            continue
         x, y = (x1 + x2) // 2, y1 - atlas.MAP_ICON_ABOVE_STAND
         if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for _, ox, oy in found):
             kind = _kind(img, x - area[0], y1 - area[1])

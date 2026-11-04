@@ -225,7 +225,11 @@ MAP_ICON_AREA = (300, 100, 1700, 975)
 # MAP_ICON_ABOVE_STAND px above the stand's top: the disc centre for winged icons, the countdown
 # label for the others (centre 65 above). 50 sat under the animated flags of a winged neighbour
 # and opened the wrong popup 1 time in 3; 35 was 10 for 10 (live 2026-11-04).
-MAP_ICON_STAND = (0xE6DDB5, 16, 12)
+MAP_ICON_STAND = (0xE6DDB5, 16, 8)
+# A stand is at least this wide and tall; a shorter one counts only when it touches the bottom
+# of the scan area, where the "squads are idling" banner hides the rest of it (the naval icon
+# at y 964 lost all but 7 rows). Smaller specks (mountain highlights) are dropped.
+MAP_ICON_STAND_MIN = 11
 MAP_ICON_ABOVE_STAND = 35
 # Icon kind from a 28x50 window above the stand (half width, from, to px above the stand top),
 # so the owner's preferred missions are opened first. (kind, colour, variation, min px),

@@ -56,8 +56,13 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   marker all differed. Check with `probe_check.py`, then a `--once` run, before relying on one.
 - Map: every icon is found by the beige pin stand under it (`MAP_ICON_STAND`), not by disc
   colour (wheel and paw discs match the sea and Dreadland). Countdown icons are startable,
-  red-winged ones are in progress; the popup decides. Gated by the idle banner; the map is
-  never dragged. "N/26" at the top is idle squads.
+  red-winged ones are in progress; the popup decides. Click 35 px above the stand, not 50:
+  the higher point sat under a neighbour's animated flags and opened the wrong popup. The
+  idle banner hides stands at the bottom edge, so a cut-off stand still counts
+  (`MAP_ICON_STAND_MIN`). Paw, wheel and dragon are opened first (`MAP_PRIORITY`, kind from
+  disc colours above the stand). Gated by the idle banner; the map is never dragged. "N/27"
+  at the top is idle squads; the bot cannot read "Required squads", so a mission short of
+  squads is just closed.
 - Personal tree: an out-of-tokens popup puts a green "Get more" under the buy point; it is
   probed (`PTREE_NEED_MORE`) and closed, never blind-clicked.
 
