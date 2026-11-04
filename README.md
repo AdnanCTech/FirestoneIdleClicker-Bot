@@ -32,18 +32,19 @@ window is not 1920x1080.
 ## Install and run
 
 1. Download `FirestoneClicker-<version>-win64.zip` from the Releases page and unzip it anywhere.
-2. Start Firestone and get to the main screen.
-3. Double-click `FirestoneClicker.exe`. A console window shows what it is doing; the same text
+2. Open `settings.toml` (next to the exe) in any text editor and turn off what you do not want.
+   Every feature is on by default except the personal tree.
+3. Start Firestone and get to the main screen.
+4. Double-click `FirestoneClicker.exe`. A console window shows what it is doing; the same text
    goes to `bot.log` next to the exe.
-4. Stop it with Win+Esc or Ctrl+C in the console.
+5. Stop it with Win+Esc or Ctrl+C in the console.
 
 The bot owns the mouse and keyboard while it runs. Do not use the PC for something else at the
 same time: keystrokes meant for the game would land in whatever window you clicked.
 
-First run creates `settings.toml` next to the exe. Edit it with any text editor to turn
-features on or off, choose which hero slots, alchemist experiments or tree nodes to use, pick
-the guardian to train, and set the pause between cycles. Changes apply the next time you start
-the bot.
+`settings.toml` controls which features run, which hero slots, alchemist experiments or tree
+nodes to use, which guardian to train, and the pause between cycles. Changes apply the next
+time you start the bot. If you delete the file, the next run recreates the defaults.
 
 ### Windows says it protected your PC
 

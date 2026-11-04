@@ -8,5 +8,7 @@ if ($LASTEXITCODE -ne 0) { throw "pyinstaller failed" }
 $version = (uv run python -c "import firestone_clicker; print(firestone_clicker.__version__)").Trim()
 $zip = "dist/FirestoneClicker-$version-win64.zip"
 if (Test-Path $zip) { Remove-Item $zip }
-Compress-Archive -Path dist/FirestoneClicker.exe, settings.toml, README.md, LICENSE -DestinationPath $zip
+# Ship the generic defaults, not the owner's personal settings.toml from the repo root.
+uv run python -c "from firestone_clicker.paths import DEFAULT_SETTINGS; open('dist/settings.toml', 'w', encoding='utf-8').write(DEFAULT_SETTINGS)"
+Compress-Archive -Path dist/FirestoneClicker.exe, dist/settings.toml, README.md, LICENSE -DestinationPath $zip
 Write-Host "built $zip"

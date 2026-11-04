@@ -33,7 +33,8 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}".TrimStart("v")
-          Compress-Archive -Path dist/FirestoneClicker.exe, settings.toml, README.md, LICENSE -DestinationPath "dist/FirestoneClicker-$version-win64.zip"
+          uv run python -c "from firestone_clicker.paths import DEFAULT_SETTINGS; open('dist/settings.toml', 'w', encoding='utf-8').write(DEFAULT_SETTINGS)"
+          Compress-Archive -Path dist/FirestoneClicker.exe, dist/settings.toml, README.md, LICENSE -DestinationPath "dist/FirestoneClicker-$version-win64.zip"
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: dist/FirestoneClicker-*-win64.zip
