@@ -1,0 +1,11 @@
+[project]
+name = "firestone-clicker"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["mss", "numpy", "pynput", "psutil"]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
