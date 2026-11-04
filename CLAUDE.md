@@ -12,8 +12,11 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   + README + LICENSE). First release v0.1.0 on 2026-11-04, CI-built zip verified on the live game.
 - `.github/workflows/release.yml`: every push runs pytest; a `v*` tag also builds the exe with
   PyInstaller and attaches the zip. Actions are pinned to commit SHAs.
-- To release: bump `__version__` in `firestone_clicker/__init__.py`, commit, `git tag -a vX.Y.Z`,
-  `git push origin main vX.Y.Z`. `.\build.ps1` does the same build locally into `dist/`.
+- To release: bump `__version__` in `firestone_clicker/__init__.py`, add a `## X.Y.Z - date`
+  section to `CHANGELOG.md` written for players (new / fixed / changed, not a commit list; show
+  it to the owner first), commit, `git tag -a vX.Y.Z`, `git push origin main vX.Y.Z`. The
+  release job uses that section as the release body and fails if it is missing.
+  `.\build.ps1` does the same exe build locally into `dist/`.
 - The shipped `settings.toml` is generated from `paths.DEFAULT_SETTINGS` (generic defaults).
   The repo-root `settings.toml` is the owner's personal config and is not shipped.
 - No `gh` CLI on this machine; check runs with the public API
