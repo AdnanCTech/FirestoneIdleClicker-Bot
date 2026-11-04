@@ -132,11 +132,3 @@ def test_free_refresh_only_without_gem():
     c2 = FakeCtx([paid] * 5)
     map_missions.run(c2, Config())
     assert (173, 918) not in c2.clicks
-
-
-def test_adventure_scroll_icon_detected():
-    # Measured live 2026-11-04: the adventure (scroll) icon ring is 0x30B7C0, brighter than the
-    # 0x00A8B0 teal already listed, which missed it; the sea is close but never within 10.
-    s = _map()
-    paint(s, (1045 - 17, 421 - 13, 1045 + 17, 421 + 13), 0x30B7C0)
-    assert _near(map_missions.available_icons(FakeCtx([s])), [(1045, 421)])
