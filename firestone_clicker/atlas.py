@@ -219,8 +219,9 @@ MAP_MAX_STARTS = 15
 MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
 MAP_ICON_AREA = (300, 100, 1700, 940)
 # (colour, variation, min box px): pink sword circle, cyan scroll ring, orange dragon body,
-# orange telescope (expedition) body.
-MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12), (0xF8A860, 20, 12))
+# orange telescope (expedition) body, bright cyan adventure (scroll) ring (0x30B7C0 measured live
+# 2026-11-04; var 10 because the sea is a near miss and var 28 flooded the map with hits).
+MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12), (0xF8A860, 20, 12), (0x30B7C0, 10, 20))
 MAP_ICON_MERGE = 45
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with
