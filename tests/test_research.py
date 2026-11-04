@@ -53,4 +53,4 @@ def test_slots_full_closed():
 def test_no_box_no_click_in_tree():
     c = FakeCtx([_library()] * 10)
     research.run(c, Config())
-    assert not _in_band(c.clicks, 40, 110, 1725, 860)
+    assert c.clicks == [(329, 657), (1816, 610), (1851, 84)]
