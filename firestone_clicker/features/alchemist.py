@@ -57,12 +57,14 @@ def run(ctx: Ctx, cfg: Config) -> None:
     for slot in wanted:
         look = _look(ctx, slot)
         if look == "paid":
+            ctx.log(f"alchemist: {slot.key} running, speed-up costs gems, left alone")
             continue
         if look == "free":
             if _free_twice(ctx, slot):
                 nav.click(ctx, slot.collect, 1000)
             continue
         if nav.found(ctx, slot.in_progress):
+            ctx.log(f"alchemist: {slot.key} running")
             continue
         if _look(ctx, slot) != "other":
             continue

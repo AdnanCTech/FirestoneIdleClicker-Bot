@@ -118,6 +118,7 @@ def test_no_start_pass_without_idle_banner():
     c = FakeCtx([s] * 5)
     map_missions.run(c, Config())
     assert not _clicked_near(c.clicks, 1105, 501)
+    assert "map: no idle squads, start pass skipped" in c.logs
 
 
 def test_free_refresh_only_without_gem():

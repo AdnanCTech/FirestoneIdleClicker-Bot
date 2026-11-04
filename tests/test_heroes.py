@@ -21,6 +21,7 @@ def test_heroes_skips_disabled():
     c = FakeCtx([s, s])
     heroes.run(c, cfg)
     assert (1670, 427) not in c.clicks
+    assert any(m.startswith("heroes: 0 upgraded, 6 not green") and "1 off" in m for m in c.logs)
 
 
 def test_heroes_skips_paid():

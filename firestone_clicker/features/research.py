@@ -68,15 +68,20 @@ def run(ctx: Ctx, cfg: Config) -> None:
     nav.click(ctx, atlas.RS_FIRESTONE_TREE, 1000)
     _park(ctx)
     # Re-detect after every claim: the strip re-lays out and the next button moves.
+    claimed = 0
     for _ in range(atlas.RS_SLOT_COUNT * 2):
         done = _done_buttons(ctx)
         if not done:
             break
         if nav.safe_click(ctx, _centre(done[0]), done[0], 1500):
             ctx.log("research: claimed")
+            claimed += 1
         else:
             break
         _park(ctx)
+    if not claimed:
+        ctx.log("research: no finished slot")
+    started = 0
     for _ in range(atlas.RS_MAX_STARTS):
         if _slots_full(ctx):
             nav.click(ctx, atlas.RS_SLOTS_FULL_CLOSE, 800)
@@ -84,7 +89,9 @@ def run(ctx: Ctx, cfg: Config) -> None:
             break
         boxes = available_boxes(ctx)
         if not boxes:
+            ctx.log(f"research: no available box in view, {started} started")
             break
+        ctx.log(f"research: {len(boxes)} available box(es) in view")
         nav.click(ctx, _centre(boxes[0]), 800)
         button = _popup_button(ctx)
         if button is None:
@@ -93,6 +100,7 @@ def run(ctx: Ctx, cfg: Config) -> None:
             break
         if nav.safe_click(ctx, _centre(button), button, 1500):
             ctx.log("research: started")
+            started += 1
         else:
             _close_popup(ctx)
             break

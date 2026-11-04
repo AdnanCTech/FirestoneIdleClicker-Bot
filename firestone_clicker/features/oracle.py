@@ -23,6 +23,7 @@ def run(ctx: Ctx, cfg: Config) -> None:
     if not nav.require_screen(ctx, atlas.TOWN_ORACLE, via_town=True):
         return
     nav.click(ctx, atlas.ORACLE_RITUALS_TAB, 1500)
+    pressed = 0
     for i, rect in enumerate(atlas.ORACLE_RITUAL_BUTTONS):
         ctx.move(300, 540)  # off the panel so no hover highlight skews the colours
         ctx.sleep(200)
@@ -31,7 +32,11 @@ def run(ctx: Ctx, cfg: Config) -> None:
             continue
         if nav.safe_click(ctx, _centre(button), button, 1500):
             ctx.log(f"oracle: ritual {i + 1} button pressed")
+            pressed += 1
             okay = _green_in(ctx, atlas.ORACLE_POPUP_BAND, min_w=150)
             if okay is not None:
                 nav.safe_click(ctx, _centre(okay), okay, 1200)
+                ctx.log("oracle: reward popup closed")
+    if not pressed:
+        ctx.log("oracle: no green button on any ritual (all claimed or running)")
     nav.big_close(ctx)

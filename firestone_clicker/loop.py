@@ -51,6 +51,7 @@ def run_cycle(ctx: Ctx, cfg: Config, only: str | None = None) -> bool:
         if only is None and not enabled(name, cfg):
             continue
         ctx.log(f"--- {name}")
+        t0 = time.monotonic()
         try:
             feature(ctx, cfg)
         except Stopped:
@@ -58,7 +59,9 @@ def run_cycle(ctx: Ctx, cfg: Config, only: str | None = None) -> bool:
         except Exception:
             ctx.log(f"{name} failed:\n{traceback.format_exc()}")
             _diag(ctx, name)
-        if not nav.go_home(ctx):
+        home = nav.go_home(ctx)
+        ctx.log(f"--- {name} done in {time.monotonic() - t0:.0f}s, back on main: {home}")
+        if not home:
             return False
     return nav.go_home(ctx)
 

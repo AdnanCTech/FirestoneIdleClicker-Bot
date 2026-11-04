@@ -9,6 +9,7 @@ from firestone_clicker.ctx import Ctx
 
 def expeditions(ctx: Ctx) -> None:
     if not nav.found(ctx, atlas.GUILD_EXPEDITION_DOT):
+        ctx.log("expeditions: no red dot, nothing to claim")
         return
     nav.click(ctx, atlas.GUILD_EXPEDITIONS, 1500)
     # First click claims the finished expedition, second starts the next one.
@@ -28,6 +29,7 @@ def expeditions(ctx: Ctx) -> None:
 
 def awaken(ctx: Ctx) -> None:
     if not nav.found(ctx, atlas.AWAKEN_DOT):
+        ctx.log("awaken: no red dot, nothing affordable")
         return
     nav.click(ctx, atlas.AWAKEN_OPEN, 1500)
     nav.click(ctx, atlas.AWAKEN_X1, 1000)
@@ -40,15 +42,20 @@ def awaken(ctx: Ctx) -> None:
         if nav.found(ctx, atlas.AWAKEN_AUTO_READY):
             if nav.safe_click(ctx, atlas.AWAKEN_AUTO, atlas.AWAKEN_AUTO_RECT, 20000):
                 ctx.log("awaken: auto")
+        else:
+            ctx.log("awaken: orange button but auto never became ready")
     elif nav.found(ctx, atlas.AWAKEN_BUTTON_GREEN):
         if nav.safe_click(ctx, atlas.AWAKEN_BUTTON, atlas.AWAKEN_BUTTON_RECT, 3000):
             ctx.log("awaken: single")
+    else:
+        ctx.log("awaken: button is grey (not enough crystals)")
     nav.big_close(ctx)
 
 
 def ptree(ctx: Ctx, cfg: Config) -> None:
     nav.click(ctx, atlas.GUILD_PTREE_ENTRY, 1500)
     nav.click(ctx, atlas.PTREE_OPEN, 1500)
+    bought = 0
     for key, node in atlas.PTREE_NODES:
         if not cfg.ptree.get(key):
             continue
@@ -58,13 +65,16 @@ def ptree(ctx: Ctx, cfg: Config) -> None:
             continue
         if nav.safe_click(ctx, atlas.PTREE_BUY, atlas.PTREE_BUY_RECT, 1000):
             if nav.found(ctx, atlas.PTREE_NEED_MORE):
-                ctx.log("ptree: out of expedition tokens")
+                ctx.log(f"ptree: out of expedition tokens at {key}, {bought} bought")
                 nav.click(ctx, atlas.PTREE_NEED_MORE_CLOSE, 800)
                 nav.click(ctx, atlas.PTREE_POPUP_CLOSE, 800)
                 break
             ctx.log(f"ptree: bought {key}")
+            bought += 1
         if nav.found(ctx, atlas.PTREE_POPUP):
             nav.click(ctx, atlas.PTREE_POPUP_CLOSE, 800)
+    else:
+        ctx.log(f"ptree: all enabled nodes visited, {bought} bought")
     nav.big_close(ctx)
 
 

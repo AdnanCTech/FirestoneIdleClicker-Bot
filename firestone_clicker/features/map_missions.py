@@ -59,21 +59,32 @@ def _free_refresh(ctx: Ctx) -> None:
 
 
 def _collect(ctx: Ctx) -> None:
+    claimed = 0
     for _ in range(atlas.MAP_MAX_COLLECT):
         if nav.found(ctx, atlas.MR_NO_MISSIONS) or not nav.found(ctx, atlas.MR_MISSION_DONE):
-            return
+            break
         nav.click(ctx, atlas.MR_FIRST_MISSION, 1200)
-        _press_green_or_close(ctx, "claimed")
+        if _press_green_or_close(ctx, "claimed"):
+            claimed += 1
+    ctx.log(f"map: {claimed} claimed" if claimed else "map: nothing to claim")
 
 
 def _start_pass(ctx: Ctx) -> None:
-    started = 0
-    for x, y in available_icons(ctx):
-        if started >= atlas.MAP_MAX_STARTS or not nav.found(ctx, atlas.MAP_IDLE_BANNER):
-            return
+    icons = available_icons(ctx)
+    ctx.log(f"map: {len(icons)} icon(s) found")
+    started = closed = 0
+    for x, y in icons:
+        if started >= atlas.MAP_MAX_STARTS:
+            break
+        if not nav.found(ctx, atlas.MAP_IDLE_BANNER):
+            ctx.log("map: no more idle squads")
+            break
         nav.click(ctx, Point(x, y), 1200)
         if _press_green_or_close(ctx, f"started mission at {x},{y}"):
             started += 1
+        else:
+            closed += 1
+    ctx.log(f"map: {started} started, {closed} popups closed (in progress or not startable)")
     ctx.move(atlas.MAP_POPUP_OUTSIDE.x, atlas.MAP_POPUP_OUTSIDE.y)
 
 
@@ -88,4 +99,6 @@ def run(ctx: Ctx, cfg: Config) -> None:
     _collect(ctx)
     if nav.found(ctx, atlas.MAP_IDLE_BANNER):
         _start_pass(ctx)
+    else:
+        ctx.log("map: no idle squads, start pass skipped")
     nav.go_home(ctx)
