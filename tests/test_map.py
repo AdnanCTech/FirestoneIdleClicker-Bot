@@ -13,17 +13,27 @@ def _map():
     return s
 
 
-def _icon(s, x, y):
-    paint(s, (x - 25, y - 25, x + 25, y + 25), 0xF07070)
+def _icon(s, x, y, disc=0xF07070):
+    # Any mission icon: a coloured disc with the beige pin stand 50 px below its click point.
+    paint(s, (x - 25, y - 25, x + 25, y + 25), disc)
+    paint(s, (x - 9, y + 50, x + 9, y + 60), 0xE6DDB5)
 
 
-def test_icons_of_each_colour_and_merge():
+def test_icons_found_by_pin_stand_whatever_the_disc_colour():
     s = _map()
-    _icon(s, 600, 400)
-    paint(s, (900 - 8, 400 - 8, 900 + 8, 400 + 8), 0x00A8B0)  # scroll ring patch
-    paint(s, (1200 - 8, 400 - 8, 1200 + 8, 400 + 8), 0xF87800)  # dragon patch
-    paint(s, (610 - 8, 410 - 8, 610 + 8, 410 + 8), 0x00A8B0)  # same icon as the pink one
+    _icon(s, 600, 400)  # sword pink
+    _icon(s, 900, 400, 0x135696)  # naval wheel: disc is sea blue, only the stand gives it away
+    _icon(s, 1200, 400, 0xA040D0)  # monster paw purple
+    paint(s, (1400 - 25, 400 - 25, 1400 + 25, 400 + 25), 0xF07070)  # pink blob with no stand: not an icon
     assert _near(map_missions.available_icons(FakeCtx([s])), [(600, 400), (900, 400), (1200, 400)])
+
+
+def test_icon_stand_near_bottom_edge_detected():
+    # Measured live 2026-11-04: the naval icon at (1040,905) has its stand at y 914..925,
+    # below the old 940 scan limit once the 50 px offset is accounted for.
+    s = _map()
+    _icon(s, 1040, 905, 0x135696)
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(1040, 905)])
 
 
 def _in_band(clicks, x1, y1, x2, y2):
@@ -86,12 +96,6 @@ def test_close_popup_uses_top_right_x_not_avatar_ring():
     c = FakeCtx([s] * 3)
     map_missions._close_popup(c)
     assert len(c.clicks) == 1 and abs(c.clicks[0][0] - 1495) <= 4 and abs(c.clicks[0][1] - 235) <= 4
-
-
-def test_telescope_icon_detected():
-    s = _map()
-    paint(s, (760 - 8, 450 - 8, 760 + 8, 450 + 8), 0xF8A860)
-    assert _near(map_missions.available_icons(FakeCtx([s])), [(760, 450)])
 
 
 def test_in_progress_popup_does_not_block_next_icon():

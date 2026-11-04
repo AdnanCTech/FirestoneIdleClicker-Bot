@@ -1,8 +1,8 @@
 """World map: claim finished missions from the left panel, start available ones (free only).
 
-The map is never dragged or zoomed. Available missions are found by their teal icon ring;
+The map is never dragged or zoomed. Every icon is opened (found by the pin stand under it);
 a popup is acted on only through a wide green button that shows no gem, so an in-progress
-popup (orange "Complete instantly" with a gem price) is just closed.
+popup (orange "Speed up" with a gem price) or one short of squads is just closed.
 """
 
 from __future__ import annotations
@@ -40,15 +40,14 @@ def _press_green_or_close(ctx: Ctx, label: str) -> bool:
 
 
 def available_icons(ctx: Ctx) -> list[tuple[int, int]]:
-    """Centres of mission icons, found by colour; nearby hits (one icon, two colours) merge."""
+    """Click points of every mission icon, found by the beige pin stand under each one."""
     area = atlas.MAP_ICON_AREA
-    img = ctx.grab(area)
+    color, var, min_px = atlas.MAP_ICON_STAND
     out: list[tuple[int, int]] = []
-    for color, var, min_px in atlas.MAP_ICON_COLORS:
-        for box in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
-            p = _centre(box)
-            if all(abs(p.x - x) > atlas.MAP_ICON_MERGE or abs(p.y - y) > atlas.MAP_ICON_MERGE for x, y in out):
-                out.append((p.x, p.y))
+    for x1, y1, x2, _ in vision.blobs(ctx.grab(area), (area[0], area[1]), color, var, min_px, cell=4):
+        x, y = (x1 + x2) // 2, y1 - atlas.MAP_ICON_ABOVE_STAND
+        if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for ox, oy in out):
+            out.append((x, y))
     return out
 
 

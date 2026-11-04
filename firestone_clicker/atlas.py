@@ -214,13 +214,18 @@ MAP_POPUP_OUTSIDE = Point(1700, 540)
 MAP_MAX_COLLECT = 10
 MAP_MAX_STARTS = 15
 # Measured live 2026-11-04. "Your squads are idling!" banner at the bottom (brown text) means
-# a squad is free. An available mission is a scroll icon with a teal ring; in-progress icons
-# are pink (sword) or green (telescope). The reference bot's fixed spot list did not line up.
+# a squad is free. Icons with red wings are in progress; icons with a countdown are startable
+# (the countdown is how long they stay on offer). The reference bot's fixed spot list did not
+# line up.
 MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
-MAP_ICON_AREA = (300, 100, 1700, 940)
-# (colour, variation, min box px): pink sword circle, cyan scroll ring, orange dragon body,
-# orange telescope (expedition) body.
-MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12), (0xF8A860, 20, 12))
+MAP_ICON_AREA = (300, 100, 1700, 975)
+# Every mission icon (sword, telescope, scroll, dragon, naval wheel, monster paw, ...) sits on
+# the same small beige pin stand, so the stand is the anchor; per-type disc colours missed the
+# wheel (sea blue) and paw (Dreadland purple). (colour, variation, min px). The click point is
+# MAP_ICON_ABOVE_STAND px above the stand's top: inside the disc both for winged icons (centre
+# 35 above) and countdown icons (centre 65 above, label in between).
+MAP_ICON_STAND = (0xE6DDB5, 16, 12)
+MAP_ICON_ABOVE_STAND = 50
 MAP_ICON_MERGE = 45
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with

@@ -54,7 +54,9 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   Guild market roof and opened it. Dialog-X search is only safe in narrow feature bands.
 - Reference-bot coordinates are not trusted until seen live: the personal tree, map and troop
   marker all differed. Check with `probe_check.py`, then a `--once` run, before relying on one.
-- Map: icons are found by colour (`MAP_ICON_COLORS`), gated by the idle banner; the map is
+- Map: every icon is found by the beige pin stand under it (`MAP_ICON_STAND`), not by disc
+  colour (wheel and paw discs match the sea and Dreadland). Countdown icons are startable,
+  red-winged ones are in progress; the popup decides. Gated by the idle banner; the map is
   never dragged. "N/26" at the top is idle squads.
 - Personal tree: an out-of-tokens popup puts a green "Get more" under the buy point; it is
   probed (`PTREE_NEED_MORE`) and closed, never blind-clicked.
