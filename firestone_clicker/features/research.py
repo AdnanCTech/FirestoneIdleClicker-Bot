@@ -20,22 +20,20 @@ def _park(ctx: Ctx) -> None:
 
 
 def _done_buttons(ctx: Ctx) -> list[Rect]:
+    # GREEN_BUTTON ±25 already covers GREEN_BUTTON_2; a second colour duplicated every box.
     img = ctx.grab(atlas.RS_SLOT_STRIP)
     origin = (atlas.RS_SLOT_STRIP[0], atlas.RS_SLOT_STRIP[1])
-    out: list[Rect] = []
-    for color in (atlas.GREEN_BUTTON, atlas.GREEN_BUTTON_2):
-        out += vision.color_boxes(
-            img, origin, color, atlas.RS_SLOT_DONE_VAR, atlas.RS_BUTTON_MIN_W, atlas.RS_BUTTON_MIN_H
-        )
-    return out
+    return vision.color_boxes(
+        img, origin, atlas.GREEN_BUTTON, atlas.RS_SLOT_DONE_VAR, atlas.RS_BUTTON_MIN_W, atlas.RS_BUTTON_MIN_H
+    )
 
 
 def available_boxes(ctx: Ctx) -> list[Rect]:
+    # Connected blobs, not column projection: the box's title text and progress bar leave too
+    # few pure-blue rows for the projection to accept it (live 2026-11-04).
     img = ctx.grab(atlas.RS_TREE_AREA)
     origin = (atlas.RS_TREE_AREA[0], atlas.RS_TREE_AREA[1])
-    return vision.color_boxes(
-        img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_W, atlas.RS_BOX_MIN_H
-    )
+    return vision.blobs(img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_H)
 
 
 def _slots_full(ctx: Ctx) -> bool:
@@ -69,9 +67,15 @@ def run(ctx: Ctx, cfg: Config) -> None:
         return
     nav.click(ctx, atlas.RS_FIRESTONE_TREE, 1000)
     _park(ctx)
-    for box in _done_buttons(ctx):
-        if nav.safe_click(ctx, _centre(box), box, 1500):
+    # Re-detect after every claim: the strip re-lays out and the next button moves.
+    for _ in range(atlas.RS_SLOT_COUNT * 2):
+        done = _done_buttons(ctx)
+        if not done:
+            break
+        if nav.safe_click(ctx, _centre(done[0]), done[0], 1500):
             ctx.log("research: claimed")
+        else:
+            break
         _park(ctx)
     for _ in range(atlas.RS_MAX_STARTS):
         if _slots_full(ctx):

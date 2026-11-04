@@ -180,6 +180,7 @@ RS_FIRESTONE_TREE = Point(1816, 610)
 RS_PARK = Point(1300, 60)
 RS_SLOT_STRIP = (60, 880, 1450, 1010)
 RS_SLOT_DONE_VAR = 25
+RS_SLOT_COUNT = 2
 RS_BUTTON_MIN_W = 40
 RS_BUTTON_MIN_H = 25
 RS_TREE_AREA = (40, 110, 1725, 860)
@@ -206,6 +207,9 @@ MR_NO_MISSIONS = Probe(117, 249, 208, 334, 0x1452B4, 3, "mr_no_missions")
 MR_MISSION_DONE = Probe(207, 305, 244, 348, GREEN_BUTTON, 3, "mr_mission_done")
 MR_FIRST_MISSION = Point(162, 334)
 MAP_POPUP_BAND = (300, 150, 1620, 900)
+# Every map popup's X sits top-right; searching the whole band matched the mission avatar's
+# orange ring at (971,246) instead and left the popup open (2026-11-04).
+MAP_POPUP_X_BAND = (1380, 160, 1620, 330)
 MAP_POPUP_OUTSIDE = Point(1700, 540)
 MAP_MAX_COLLECT = 10
 MAP_MAX_STARTS = 15
@@ -214,8 +218,9 @@ MAP_MAX_STARTS = 15
 # are pink (sword) or green (telescope). The reference bot's fixed spot list did not line up.
 MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
 MAP_ICON_AREA = (300, 100, 1700, 940)
-# (colour, variation, min box px): pink sword circle, cyan scroll ring, orange dragon body.
-MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12))
+# (colour, variation, min box px): pink sword circle, cyan scroll ring, orange dragon body,
+# orange telescope (expedition) body.
+MAP_ICON_COLORS = ((0xF07070, 24, 30), (0x00A8B0, 28, 12), (0xF87800, 20, 12), (0xF8A860, 20, 12))
 MAP_ICON_MERGE = 45
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with

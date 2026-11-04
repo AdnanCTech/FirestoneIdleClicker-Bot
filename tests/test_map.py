@@ -77,6 +77,41 @@ def test_detects_icons_and_starts_free_mission_only():
     assert not _in_band(c2.clicks, 958, 830, 1208, 900)
 
 
+def test_close_popup_uses_top_right_x_not_avatar_ring():
+    s = _map()
+    paint(s, (940, 215, 1000, 275), 0xFF6109)  # avatar ring, centre of popup header
+    paint(s, (960, 235, 980, 255), 0xFFF9CE)
+    paint(s, (1470, 210, 1520, 260), 0xFF6109)  # the real X, top right
+    paint(s, (1488, 228, 1504, 244), 0xFFF9CE)
+    c = FakeCtx([s] * 3)
+    map_missions._close_popup(c)
+    assert len(c.clicks) == 1 and abs(c.clicks[0][0] - 1495) <= 4 and abs(c.clicks[0][1] - 235) <= 4
+
+
+def test_telescope_icon_detected():
+    s = _map()
+    paint(s, (760 - 8, 450 - 8, 760 + 8, 450 + 8), 0xF8A860)
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(760, 450)])
+
+
+def test_in_progress_popup_does_not_block_next_icon():
+    s = _map()
+    paint(s, atlas.MAP_IDLE_BANNER.rect, 0x542710)
+    _icon(s, 600, 400)
+    _icon(s, 1100, 500)
+    inprog = s.copy()  # popup with avatar ring and corner X but no green button
+    paint(inprog, (940, 215, 1000, 275), 0xFF6109)
+    paint(inprog, (960, 235, 980, 255), 0xFFF9CE)
+    paint(inprog, (1470, 210, 1520, 260), 0xFF6109)
+    paint(inprog, (1488, 228, 1504, 244), 0xFFF9CE)
+    start = s.copy()
+    paint(start, (958, 830, 1208, 900), 0x0AA008)
+    # m, first icon -> in-progress popup, X -> map, second icon -> start popup, start -> map
+    c = FakeCtx([s, inprog, s, start] + [_map()] * 10)
+    map_missions.run(c, Config())
+    assert _clicked_near(c.clicks, 1100, 500) and _in_band(c.clicks, 958, 830, 1208, 900)
+
+
 def test_no_start_pass_without_idle_banner():
     s = _map()
     _icon(s, 1105, 501)

@@ -17,6 +17,38 @@ def _in_band(clicks, x1, y1, x2, y2):
     return any(x1 <= x <= x2 and y1 <= y <= y2 for x, y in clicks)
 
 
+def _tree_box(s, x1, y1):
+    """An available box as drawn in the game: blue with a white title and a yellow bar."""
+    paint(s, (x1, y1, x1 + 383, y1 + 101), 0x0848D8)
+    paint(s, (x1 + 120, y1 + 20, x1 + 340, y1 + 45), 0xF8F8F8)
+    paint(s, (x1 + 100, y1 + 62, x1 + 360, y1 + 88), 0xE8C820)
+    paint(s, (x1 + 10, y1 + 15, x1 + 90, y1 + 90), 0xF06060)
+
+
+def test_available_box_with_text_and_bar_is_found():
+    s = _library()
+    _tree_box(s, 225, 471)
+    boxes = research.available_boxes(FakeCtx([s]))
+    assert len(boxes) == 1
+    x1, y1, x2, y2 = boxes[0]
+    assert abs(x1 - 225) <= 8 and abs(y1 - 471) <= 8 and x2 - x1 > 300 and y2 - y1 > 80
+
+
+def test_claims_both_slots_after_layout_shift():
+    # Two finished slots. After the first claim the game re-lays out the strip and the
+    # second button moves: a list captured before clicking would miss it.
+    both = _library()
+    paint(both, (533, 917, 691, 975), 0x0AA008)
+    paint(both, (1180, 917, 1338, 975), 0x16BC15)
+    shifted = _library()
+    paint(shifted, (533, 917, 691, 975), 0x0AA008)  # the remaining one slid left
+    # town, library, tree tab, claim #1 -> shifted, claim #2 -> empty
+    c = FakeCtx([both, both, both, shifted, _library(), _library()])
+    research.run(c, Config())
+    claims = [p for p in c.clicks if 917 <= p[1] <= 975]
+    assert len(claims) == 2 and all(533 <= x <= 691 for x, _ in claims)
+
+
 def test_claims_done_slot():
     s = _library()
     paint(s, (600, 930, 760, 990), 0x0AA008)  # done button in left slot

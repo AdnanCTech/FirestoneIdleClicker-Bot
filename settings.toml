@@ -4,7 +4,7 @@ delay_s = 60
 # Which automations run each cycle.
 [features]
 expeditions = true
-awaken = true
+awaken = false
 ptree = false
 map_missions = true
 alchemist = true
@@ -33,7 +33,7 @@ special = true
 [guardian]
 evolve = true
 train = true
-train_target = 1
+train_target = 3
 
 # Personal tree nodes to upgrade.
 [ptree]

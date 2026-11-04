@@ -26,7 +26,7 @@ def _green_button(ctx: Ctx) -> Rect | None:
 
 
 def _close_popup(ctx: Ctx) -> None:
-    x = nav.find_dialog_x(ctx, atlas.MAP_POPUP_BAND)
+    x = nav.find_dialog_x(ctx, atlas.MAP_POPUP_X_BAND)
     nav.click(ctx, x or atlas.MAP_POPUP_OUTSIDE, 800)
 
 
