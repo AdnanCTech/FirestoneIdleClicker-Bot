@@ -14,9 +14,11 @@ def _map():
 
 
 def _icon(s, x, y, disc=0xF07070):
-    # Any mission icon: a coloured disc with the beige pin stand 50 px below its click point.
+    # Any mission icon: a coloured disc with the beige pin stand 35 px below its click point.
+    # Measured live 2026-11-04: 50 px above the stand sat under an animated flag of the
+    # in-progress icon above and opened the wrong popup 1 time in 3; 35 px was 10 for 10.
     paint(s, (x - 25, y - 25, x + 25, y + 25), disc)
-    paint(s, (x - 9, y + 50, x + 9, y + 60), 0xE6DDB5)
+    paint(s, (x - 9, y + 35, x + 9, y + 45), 0xE6DDB5)
 
 
 def test_icons_found_by_pin_stand_whatever_the_disc_colour():
@@ -136,3 +138,17 @@ def test_free_refresh_only_without_gem():
     c2 = FakeCtx([paid] * 5)
     map_missions.run(c2, Config())
     assert (173, 918) not in c2.clicks
+
+
+def test_priority_icons_come_first_then_the_rest_top_down():
+    # Keys measured live 2026-11-04 in a 28x50 window above the stand: paw magenta glow
+    # (~150 px vs 0 elsewhere), wheel cyan highlights (96 vs <=3), dragon deep orange (55+ vs <=2).
+    s = _map()
+    _icon(s, 600, 300)  # sword, highest on the map
+    _icon(s, 1300, 350, 0xF05800)  # dragon
+    _icon(s, 700, 500)  # telescope-ish, plain
+    _icon(s, 1000, 600, 0x18B8F0)  # wheel
+    _icon(s, 1200, 800, 0xF060F0)  # paw, lowest on the map
+    got = map_missions.available_icons(FakeCtx([s]))
+    want = [(1200, 800), (1000, 600), (1300, 350), (600, 300), (700, 500)]
+    assert len(got) == len(want) and all(abs(gx - wx) <= 4 and abs(gy - wy) <= 4 for (gx, gy), (wx, wy) in zip(got, want))

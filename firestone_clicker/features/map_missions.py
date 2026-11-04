@@ -39,16 +39,31 @@ def _press_green_or_close(ctx: Ctx, label: str) -> bool:
     return False
 
 
+def _kind(img, x: int, stand_top: int) -> str:
+    """Mission kind from the disc colours above the stand; "other" when no key matches."""
+    half, above, below = atlas.MAP_ICON_SAMPLE
+    patch = img[max(0, stand_top - above) : max(0, stand_top - below), max(0, x - half) : x + half]
+    for kind, color, var, min_px in atlas.MAP_ICON_KINDS:
+        if patch.size and int(vision.match_mask(patch, color, var).sum()) >= min_px:
+            return kind
+    return "other"
+
+
 def available_icons(ctx: Ctx) -> list[tuple[int, int]]:
-    """Click points of every mission icon, found by the beige pin stand under each one."""
+    """Click points of every mission icon (found by the beige pin stand under each one),
+    preferred kinds first in MAP_PRIORITY order, then the rest top to bottom."""
     area = atlas.MAP_ICON_AREA
     color, var, min_px = atlas.MAP_ICON_STAND
-    out: list[tuple[int, int]] = []
-    for x1, y1, x2, _ in vision.blobs(ctx.grab(area), (area[0], area[1]), color, var, min_px, cell=4):
+    img = ctx.grab(area)
+    found: list[tuple[int, int, int]] = []
+    for x1, y1, x2, _ in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
         x, y = (x1 + x2) // 2, y1 - atlas.MAP_ICON_ABOVE_STAND
-        if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for ox, oy in out):
-            out.append((x, y))
-    return out
+        if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for _, ox, oy in found):
+            kind = _kind(img, x - area[0], y1 - area[1])
+            rank = atlas.MAP_PRIORITY.index(kind) if kind in atlas.MAP_PRIORITY else len(atlas.MAP_PRIORITY)
+            found.append((rank, x, y))
+    found.sort(key=lambda f: f[0])  # stable: within a rank the blob order (top to bottom) holds
+    return [(x, y) for _, x, y in found]
 
 
 def _free_refresh(ctx: Ctx) -> None:

@@ -222,10 +222,18 @@ MAP_ICON_AREA = (300, 100, 1700, 975)
 # Every mission icon (sword, telescope, scroll, dragon, naval wheel, monster paw, ...) sits on
 # the same small beige pin stand, so the stand is the anchor; per-type disc colours missed the
 # wheel (sea blue) and paw (Dreadland purple). (colour, variation, min px). The click point is
-# MAP_ICON_ABOVE_STAND px above the stand's top: inside the disc both for winged icons (centre
-# 35 above) and countdown icons (centre 65 above, label in between).
+# MAP_ICON_ABOVE_STAND px above the stand's top: the disc centre for winged icons, the countdown
+# label for the others (centre 65 above). 50 sat under the animated flags of a winged neighbour
+# and opened the wrong popup 1 time in 3; 35 was 10 for 10 (live 2026-11-04).
 MAP_ICON_STAND = (0xE6DDB5, 16, 12)
-MAP_ICON_ABOVE_STAND = 50
+MAP_ICON_ABOVE_STAND = 35
+# Icon kind from a 28x50 window above the stand (half width, from, to px above the stand top),
+# so the owner's preferred missions are opened first. (kind, colour, variation, min px),
+# checked in this order; measured live 2026-11-04 on four maps: paw magenta glow ~150 px vs 0
+# on every other icon, wheel cyan highlights 96 vs <=3, dragon deep orange 55+ vs <=2.
+MAP_ICON_SAMPLE = (14, 75, 25)
+MAP_ICON_KINDS = (("paw", 0xF060F0, 48, 40), ("wheel", 0x18B8F0, 24, 30), ("dragon", 0xF05800, 12, 25))
+MAP_PRIORITY = ("paw", "wheel", "dragon")
 MAP_ICON_MERGE = 45
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with
