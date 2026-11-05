@@ -19,14 +19,16 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   `.\build.ps1` does the same exe build locally into `dist/`.
 - The shipped `settings.toml` is generated from `paths.DEFAULT_SETTINGS` (generic defaults).
   The repo-root `settings.toml` is the owner's personal config and is not shipped.
-- No `gh` CLI on this machine; check runs with the public API
-  (`api.github.com/repos/AdnanCTech/FirestoneIdleClicker-Bot/actions/runs`).
+- `gh` CLI is installed (logged in as AdnanCTech) at `C:\Program Files\GitHub CLI\gh.exe`; it
+  may be missing from PATH in a shell started before the install, so call it by full path.
+  Use it for runs (`gh run list`), releases (`gh release view/edit`) and repo settings
+  (`gh repo edit`) instead of raw API calls.
 
 ## Run / test
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (72 tests, ~3 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (75 tests, ~3 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
