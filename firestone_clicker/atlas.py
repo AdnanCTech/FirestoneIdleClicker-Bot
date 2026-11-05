@@ -231,6 +231,8 @@ MAP_ICON_STAND = (0xE6DDB5, 16, 8)
 # at y 964 lost all but 7 rows). Smaller specks (mountain highlights) are dropped.
 MAP_ICON_STAND_MIN = 11
 MAP_ICON_ABOVE_STAND = 35
+# Game names per icon: scope = Scout, scroll = Adventure, sword = War, paw = Monster,
+# dragon = Dragon, wheel = Naval, volcano = Titan (locked until 5B gear power, never seen).
 # Icon kind from a 28x50 window above the stand (half width, from, to px above the stand top),
 # so the owner's preferred missions are opened first. (kind, colour, variation, min px),
 # checked in this order; measured live 2026-11-04 on four maps: paw magenta glow ~150 px vs 0

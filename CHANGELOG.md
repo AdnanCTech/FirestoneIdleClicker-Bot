@@ -3,6 +3,24 @@
 The section for a version becomes the GitHub release notes. Write it for players, not for
 developers: what the bot now does differently, what was fixed, what to change in settings.
 
+## 0.1.1 - 2026-11-05
+
+Map missions only. Everything else is unchanged.
+
+**Fixed**
+- Adventure, Naval and some other missions were never opened: their icon colours matched
+  the terrain or sea. Every mission icon is now found by the pin under it, whatever the
+  picture on it.
+- The Naval mission at the bottom of the map was missed exactly when squads were idle,
+  because the "Your squads are idling" banner covered its pin. It is now detected anyway.
+- Clicks sometimes opened the neighbouring in-progress mission instead of the intended one.
+  The click point moved lower on the icon; 10 of 10 test clicks hit the right mission.
+
+**Changed**
+- Monster, Naval and Dragon missions are opened first, then Scout, Adventure and War
+  missions top to bottom, so idle squads go to the long, valuable missions before the
+  short ones. Titan missions are not handled yet (locked until 5B gear power).
+
 ## 0.1.0 - 2026-11-04
 
 First release.
