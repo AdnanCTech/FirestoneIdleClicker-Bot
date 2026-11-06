@@ -218,7 +218,12 @@ MAP_MAX_STARTS = 15
 # (the countdown is how long they stay on offer). The reference bot's fixed spot list did not
 # line up.
 MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
-MAP_ICON_AREA = (300, 100, 1700, 975)
+MAP_ICON_AREA = (300, 100, 1770, 975)  # Celenis dragon stand at x 1716; side buttons from 1775
+# The idle banner is a cream gradient whose lower rows match the stand colour, and it moves
+# (top at y 944 on 2026-11-06, 971 the day before). Its top is found on the column below
+# "Your" and the icon scan stops there.
+MAP_BANNER_COLUMN = 480
+MAP_BANNER_FACE = (0xF2DEC4, 24)
 # Every mission icon (sword, telescope, scroll, dragon, naval wheel, monster paw, ...) sits on
 # the same small beige pin stand, so the stand is the anchor; per-type disc colours missed the
 # wheel (sea blue) and paw (Dreadland purple). (colour, variation, min px). The click point is

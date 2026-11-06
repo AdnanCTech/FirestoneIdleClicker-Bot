@@ -49,15 +49,28 @@ def _kind(img, x: int, stand_top: int) -> str:
     return "other"
 
 
+def _banner_rows(img, area: Rect) -> int:
+    """How many rows at the bottom of the capture the idle banner covers (0 when it is lower)."""
+    x = atlas.MAP_BANNER_COLUMN - area[0]
+    col = vision.match_mask(img[:, x : x + 1], *atlas.MAP_BANNER_FACE)[:, 0]
+    n = 0
+    while n < len(col) and col[len(col) - 1 - n]:
+        n += 1
+    return n
+
+
 def available_icons(ctx: Ctx) -> list[tuple[int, int]]:
     """Click points of every mission icon (found by the beige pin stand under each one),
     preferred kinds first in MAP_PRIORITY order, then the rest top to bottom."""
     area = atlas.MAP_ICON_AREA
     color, var, min_px = atlas.MAP_ICON_STAND
     img = ctx.grab(area)
+    banner = _banner_rows(img, area)
+    bottom = area[3] - banner  # stands cut off by the banner end here, not at the area edge
+    img = img[: len(img) - banner]
     found: list[tuple[int, int, int]] = []
     for x1, y1, x2, y2 in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
-        if x2 - x1 < atlas.MAP_ICON_STAND_MIN or (y2 - y1 < atlas.MAP_ICON_STAND_MIN and y2 < area[3] - 4):
+        if x2 - x1 < atlas.MAP_ICON_STAND_MIN or (y2 - y1 < atlas.MAP_ICON_STAND_MIN and y2 < bottom - 4):
             continue
         x, y = (x1 + x2) // 2, y1 - atlas.MAP_ICON_ABOVE_STAND
         if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for _, ox, oy in found):

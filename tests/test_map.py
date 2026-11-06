@@ -169,3 +169,25 @@ def test_tiny_beige_specks_are_not_icons():
     paint(s, (800, 500, 806, 506), 0xE6DDB5)  # 7x7 speck, as seen on the mountains
     paint(s, (1460, 360, 1470, 366), 0xE6DDB5)  # 11x7 sliver away from the bottom edge
     assert map_missions.available_icons(FakeCtx([s])) == []
+
+
+def test_icon_on_celenis_at_the_right_edge_detected():
+    # Measured live 2026-11-06: the Dragon mission on Celenis has its stand at x 1716..1727,
+    # past the old 1700 scan limit; the side button panel starts at x 1775.
+    s = _map()
+    _icon(s, 1721, 653, 0xF05800)
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(1721, 653)])
+
+
+def test_idle_banner_gradient_is_not_a_row_of_pins():
+    # Measured live 2026-11-06: the banner's cream gradient (top at y 944 that day, 971 the day
+    # before) matches the stand colour in its lower rows, and the gaps between its letters
+    # looked like a row of 11 px stands. A real stand cut off by the banner must still count.
+    s = _map()
+    for y in range(944, 996):
+        paint(s, (462, y, 1240, y + 1), 0xFBE9D2 if y < 964 else 0xEFD7BD)
+    for x in range(520, 1200, 20):  # dark letters leaving 11 px cream gaps
+        paint(s, (x, 955, x + 9, 985), 0x3A2415)
+    paint(s, (1032, 937, 1047, 944), 0xE6DDB5)  # stand with only 7 rows above the banner
+    paint(s, (1040 - 25, 902 - 25, 1040 + 25, 902 + 25), 0x135696)
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(1040, 902)])
