@@ -168,11 +168,14 @@ def run(ctx: Ctx, cfg: Config) -> None:
             ctx.log("research: no popup button")
             _close_popup(ctx)
             break
-        if nav.safe_click(ctx, _centre(button), button, 1500):
-            ctx.log("research: started")
-            started += 1
-        else:
+        if not nav.safe_click(ctx, _centre(button), button, 1500):
             _close_popup(ctx)
             break
+        if _slots_full(ctx):  # the previous start took the last slot; the game says so only now
+            nav.click(ctx, atlas.RS_SLOTS_FULL_CLOSE, 800)
+            ctx.log("research: slots full")
+            break
+        ctx.log("research: started")
+        started += 1
         _park(ctx)
     nav.big_close(ctx)

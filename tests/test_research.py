@@ -166,3 +166,18 @@ def test_box_cut_off_by_the_side_panel_is_not_picked():
     _tree_box(s, 1085, 440)
     box = research.pick_box(FakeCtx([s]))
     assert abs(box[0] - 1085) <= 8, box
+
+
+def test_start_that_hits_slots_full_is_not_logged_as_started():
+    # Live 2026-11-06: the second start of a pass took the last free slot one click earlier,
+    # so the game answered with the "slots full" dialog and the log still said "started".
+    s = _library()
+    _tree_box(s, 680, 222)
+    full = _library()
+    paint(full, atlas.RS_SLOTS_FULL_X.rect, 0xFF6109)
+    paint(full, atlas.RS_SLOTS_FULL_CREAM.rect, 0xE8D1B7)
+    # town, tree, drag (no change), box click -> popup, green click -> slots-full dialog
+    c = FakeCtx([s, s, s, s, _popup(), full] + [_library()] * 10)
+    research.run(c, Config())
+    assert "research: started" not in c.logs and "research: slots full" in c.logs, c.logs
+    assert (1370, 355) in c.clicks
