@@ -36,6 +36,31 @@ def available_boxes(ctx: Ctx) -> list[Rect]:
     return vision.blobs(img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_H)
 
 
+def _bar_fill(img, origin: tuple[int, int], box: Rect) -> float:
+    """Share of the box's progress bar that is filled (0.0 when the bar is not found)."""
+    x1, y1, x2, y2 = box
+    r1, r2 = atlas.RS_BAR_ROWS
+    left, right = atlas.RS_BAR_INSET
+    h = y2 - y1
+    band = img[y1 - origin[1] + int(h * r1) : y1 - origin[1] + int(h * r2), x1 - origin[0] + left : x2 - origin[0] - right]
+    fill = int(vision.match_mask(band, *atlas.RS_BAR_FILL).sum())
+    track = int(vision.match_mask(band, *atlas.RS_BAR_TRACK).sum())
+    return fill / (fill + track) if fill + track else 0.0
+
+
+def pick_box(ctx: Ctx) -> Rect | None:
+    """The available box to start: rightmost column first (columns unlock on levels in the
+    one before), then the lowest progress bar, then top to bottom."""
+    img = ctx.grab(atlas.RS_TREE_AREA)
+    origin = (atlas.RS_TREE_AREA[0], atlas.RS_TREE_AREA[1])
+    boxes = vision.blobs(img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_H)
+    if not boxes:
+        return None
+    right = max(b[0] for b in boxes)
+    column = [b for b in boxes if right - b[0] <= atlas.RS_COLUMN_GAP]
+    return min(column, key=lambda b: (round(_bar_fill(img, origin, b), 2), b[1]))
+
+
 def _slots_full(ctx: Ctx) -> bool:
     return nav.found(ctx, atlas.RS_SLOTS_FULL_X) and nav.found(ctx, atlas.RS_SLOTS_FULL_CREAM)
 
@@ -87,12 +112,12 @@ def run(ctx: Ctx, cfg: Config) -> None:
             nav.click(ctx, atlas.RS_SLOTS_FULL_CLOSE, 800)
             ctx.log("research: slots full")
             break
-        boxes = available_boxes(ctx)
-        if not boxes:
+        box = pick_box(ctx)
+        if box is None:
             ctx.log(f"research: no available box in view, {started} started")
             break
-        ctx.log(f"research: {len(boxes)} available box(es) in view")
-        nav.click(ctx, _centre(boxes[0]), 800)
+        ctx.log(f"research: starting box at {box[0]},{box[1]}")
+        nav.click(ctx, _centre(box), 800)
         button = _popup_button(ctx)
         if button is None:
             ctx.log("research: no popup button")

@@ -188,6 +188,15 @@ RS_AVAILABLE = 0x1D49DE
 RS_AVAILABLE_VAR = 32
 RS_BOX_MIN_W = 140
 RS_BOX_MIN_H = 60
+# Progress bar inside a box, live 2026-11-06 (box 103 tall: bar rows 70..88, x from +100 to
+# -15): yellow fill 0xEFCF23, dark track 0x172874 (box body 0x193674 is 14 off in green, so
+# the track variation stays tight). Columns are ~455 px apart; blobs within RS_COLUMN_GAP of
+# the rightmost box's left edge belong to the same column.
+RS_BAR_ROWS = (0.68, 0.85)
+RS_BAR_INSET = (100, 15)
+RS_BAR_FILL = (0xEFCF2C, 24)
+RS_BAR_TRACK = (0x172874, 12)
+RS_COLUMN_GAP = 60
 RS_POPUP_BUTTON_BAND = (620, 630, 980, 860)
 RS_POPUP_BUTTON_MIN_W = 200
 RS_POPUP_X_BAND = (1170, 160, 1300, 340)

@@ -21,7 +21,7 @@ def _tree_box(s, x1, y1):
     """An available box as drawn in the game: blue with a white title and a yellow bar."""
     paint(s, (x1, y1, x1 + 383, y1 + 101), 0x0848D8)
     paint(s, (x1 + 120, y1 + 20, x1 + 340, y1 + 45), 0xF8F8F8)
-    paint(s, (x1 + 100, y1 + 62, x1 + 360, y1 + 88), 0xE8C820)
+    paint(s, (x1 + 100, y1 + 70, x1 + 360, y1 + 88), 0xEFCF23)  # bar rows measured live 2026-11-06
     paint(s, (x1 + 10, y1 + 15, x1 + 90, y1 + 90), 0xF06060)
 
 
@@ -95,3 +95,32 @@ def test_no_box_no_click_in_tree():
     c = FakeCtx([_library()] * 10)
     research.run(c, Config())
     assert c.clicks == [(329, 657), (1816, 610), (1851, 84)]
+
+
+def _bar(s, x1, y1, fill):
+    """Progress bar as measured live 2026-11-06: dark track 0x172874, yellow fill 0xEFCF23."""
+    paint(s, (x1 + 100, y1 + 70, x1 + 360, y1 + 88), 0x172874)
+    if fill:
+        paint(s, (x1 + 100, y1 + 70, x1 + 100 + int(260 * fill), y1 + 88), 0xEFCF23)
+
+
+def test_picks_rightmost_column_then_lowest_bar():
+    # Live 2026-11-06, Tree XII: column 2 had health 15/60, damage 0/60, armor 0/60 and the
+    # bot started health every time because it was the first blob. Columns unlock on levels
+    # in the previous column, so the rightmost open column gets the starts, lowest bar first.
+    s = _library()
+    _tree_box(s, 225, 224)
+    _bar(s, 225, 224, 0.0)  # column 1, empty, but a column behind
+    _tree_box(s, 680, 222)
+    _bar(s, 680, 222, 0.25)
+    _tree_box(s, 680, 470)
+    _bar(s, 680, 470, 0.0)
+    _tree_box(s, 680, 710)
+    _bar(s, 680, 710, 0.0)
+    box = research.pick_box(FakeCtx([s]))
+    assert abs(box[0] - 680) <= 8 and abs(box[1] - 470) <= 8, box
+    popup = s.copy()
+    paint(popup, (650, 680, 942, 740), 0x0AA008)
+    c = FakeCtx([s, s, popup] + [_library()] * 10)
+    research.run(c, Config())
+    assert _in_band(c.clicks, 680, 470, 1063, 571) and not _in_band(c.clicks, 680, 222, 1063, 323)

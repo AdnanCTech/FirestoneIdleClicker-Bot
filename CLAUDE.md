@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (78 tests, ~3 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (79 tests, ~3 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -71,8 +71,13 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - Personal tree: an out-of-tokens popup puts a green "Get more" under the buy point; it is
   probed (`PTREE_NEED_MORE`) and closed, never blind-clicked.
 
+- Research: columns unlock on levels in the column before (varies, often 8), so the pick is
+  the rightmost column with blue boxes, lowest progress bar first (`research.pick_box`, bar
+  fill measured from yellow vs dark track pixels; the "15/60" text inflates the ratio a
+  little but keeps the order). Never use the arrows next to the tree name: they switch trees.
+
 ## Known gaps
-- Research starts only boxes visible without scrolling. Oracle "Claim" state and reward popup
+- Research starts only boxes visible without scrolling (the tree pans by dragging). Oracle "Claim" state and reward popup
   not yet seen live.
 
 # context-mode — MANDATORY routing rules
