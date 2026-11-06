@@ -121,6 +121,48 @@ def test_picks_rightmost_column_then_lowest_bar():
     assert abs(box[0] - 680) <= 8 and abs(box[1] - 470) <= 8, box
     popup = s.copy()
     paint(popup, (650, 680, 942, 740), 0x0AA008)
-    c = FakeCtx([s, s, popup] + [_library()] * 10)
+    # town, tree, one drag that changes nothing (already at the end), then the box click opens the popup
+    c = FakeCtx([s, s, s, s, popup] + [_library()] * 10)
     research.run(c, Config())
     assert _in_band(c.clicks, 680, 470, 1063, 571) and not _in_band(c.clicks, 680, 222, 1063, 323)
+
+
+def _popup():
+    popup = _library()
+    paint(popup, (650, 680, 942, 740), 0x0AA008)
+    return popup
+
+
+def test_scrolls_right_until_the_view_stops_changing_then_picks():
+    # Live 2026-11-06: the tree pans by dragging, one drag moves it about a column, and the
+    # position persists when the tree is reopened. Open columns further right are the ones
+    # that should get the starts.
+    s0 = _library()
+    _tree_box(s0, 680, 222)
+    s1 = _library()  # after one drag: the column sits at the left edge, nothing new to the right
+    _tree_box(s1, 160, 222)
+    # town, tree, drag -> s1 (moved), drag -> s1 (end), box click -> popup
+    c = FakeCtx([s0, s0, s0, s1, s1, _popup()] + [_library()] * 10)
+    research.run(c, Config())
+    assert c.drags[:3] == [(900, 840, 445, 840), (900, 840, 445, 840), (445, 840, 900, 840)], c.drags
+    assert _in_band(c.clicks, 160, 222, 543, 323) and not _in_band(c.clicks, 680, 222, 1063, 323)
+
+
+def test_drags_back_when_the_end_of_the_tree_has_nothing_available():
+    s0 = _library()
+    _tree_box(s0, 680, 222)
+    end = _library()  # only locked boxes in view
+    # town, tree, drag -> end (moved), drag -> end (stop), drag back -> s0, box click -> popup
+    c = FakeCtx([s0, s0, s0, end, end, s0, _popup()] + [_library()] * 10)
+    research.run(c, Config())
+    assert c.drags[:3] == [(900, 840, 445, 840), (900, 840, 445, 840), (445, 840, 900, 840)], c.drags
+    assert _in_band(c.clicks, 680, 222, 1063, 323)
+
+
+def test_box_cut_off_by_the_side_panel_is_not_picked():
+    # A box starting at x 1545 runs under the Meteorite/Firestone panel; its centre is a panel click.
+    s = _library()
+    _tree_box(s, 1545, 320)
+    _tree_box(s, 1085, 440)
+    box = research.pick_box(FakeCtx([s]))
+    assert abs(box[0] - 1085) <= 8, box

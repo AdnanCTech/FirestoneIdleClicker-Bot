@@ -186,7 +186,7 @@ RS_BUTTON_MIN_H = 25
 RS_TREE_AREA = (40, 110, 1725, 860)
 RS_AVAILABLE = 0x1D49DE
 RS_AVAILABLE_VAR = 32
-RS_BOX_MIN_W = 140
+RS_BOX_MIN_W = 300  # boxes are 375-383 wide; one cut by the side panel at x 1725 is narrower
 RS_BOX_MIN_H = 60
 # Progress bar inside a box, live 2026-11-06 (box 103 tall: bar rows 70..88, x from +100 to
 # -15): yellow fill 0xEFCF23, dark track 0x172874 (box body 0x193674 is 14 off in green, so
@@ -197,6 +197,13 @@ RS_BAR_INSET = (100, 15)
 RS_BAR_FILL = (0xEFCF2C, 24)
 RS_BAR_TRACK = (0x172874, 12)
 RS_COLUMN_GAP = 60
+# The tree pans by dragging and keeps its position when reopened (live 2026-11-06: a 455 px
+# drag moved it ~520 px, columns are ~465 px apart). Drags run along y 840, an empty band
+# between the lowest box row and the slot strip, so a drag can never land on a box.
+RS_DRAG_Y = 840
+RS_DRAG_X = (900, 445)
+RS_MAX_DRAGS = 6
+RS_VIEW_CHANGE = 0.02  # share of tree pixels that must change for a drag to count as a pan
 RS_POPUP_BUTTON_BAND = (620, 630, 980, 860)
 RS_POPUP_BUTTON_MIN_W = 200
 RS_POPUP_X_BAND = (1170, 160, 1300, 340)

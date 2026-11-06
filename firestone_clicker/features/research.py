@@ -1,6 +1,9 @@
-"""Library research, minimal: claim finished slots, start any available box in view (free only)."""
+"""Library research: claim finished slots, pan the tree to its right end and start the
+available box in the rightmost open column with the least progress (free only)."""
 
 from __future__ import annotations
+
+import numpy as np
 
 from firestone_clicker import atlas, nav, vision
 from firestone_clicker.atlas import Point
@@ -54,11 +57,49 @@ def pick_box(ctx: Ctx) -> Rect | None:
     img = ctx.grab(atlas.RS_TREE_AREA)
     origin = (atlas.RS_TREE_AREA[0], atlas.RS_TREE_AREA[1])
     boxes = vision.blobs(img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_H)
+    boxes = [b for b in boxes if b[2] - b[0] >= atlas.RS_BOX_MIN_W]
     if not boxes:
         return None
     right = max(b[0] for b in boxes)
     column = [b for b in boxes if right - b[0] <= atlas.RS_COLUMN_GAP]
     return min(column, key=lambda b: (round(_bar_fill(img, origin, b), 2), b[1]))
+
+
+def _drag(ctx: Ctx, to_right_end: bool) -> np.ndarray:
+    """Pan the tree one column (towards its right end, or back) and return the new view."""
+    a, b = atlas.RS_DRAG_X
+    if to_right_end:
+        ctx.drag(a, atlas.RS_DRAG_Y, b, atlas.RS_DRAG_Y)
+    else:
+        ctx.drag(b, atlas.RS_DRAG_Y, a, atlas.RS_DRAG_Y)
+    _park(ctx)
+    ctx.sleep(500)  # the pan glides to a stop
+    return ctx.grab(atlas.RS_TREE_AREA)
+
+
+def _changed(before: np.ndarray, after: np.ndarray) -> bool:
+    diff = np.abs(before[:, :, :3].astype(np.int16) - after[:, :, :3].astype(np.int16)).max(axis=2) > 40
+    return float(diff.mean()) > atlas.RS_VIEW_CHANGE
+
+
+def _scroll_to_end(ctx: Ctx) -> None:
+    view = ctx.grab(atlas.RS_TREE_AREA)
+    for _ in range(atlas.RS_MAX_DRAGS):
+        after = _drag(ctx, to_right_end=True)
+        if not _changed(view, after):
+            return
+        view = after
+
+
+def _find_box(ctx: Ctx) -> Rect | None:
+    """The box to start at the right end of the tree, else one column back at a time."""
+    box = pick_box(ctx)
+    for _ in range(atlas.RS_MAX_DRAGS):
+        if box is not None:
+            return box
+        _drag(ctx, to_right_end=False)
+        box = pick_box(ctx)
+    return box
 
 
 def _slots_full(ctx: Ctx) -> bool:
@@ -107,14 +148,18 @@ def run(ctx: Ctx, cfg: Config) -> None:
     if not claimed:
         ctx.log("research: no finished slot")
     started = 0
+    scrolled = False
     for _ in range(atlas.RS_MAX_STARTS):
         if _slots_full(ctx):
             nav.click(ctx, atlas.RS_SLOTS_FULL_CLOSE, 800)
             ctx.log("research: slots full")
             break
-        box = pick_box(ctx)
+        if not scrolled:
+            _scroll_to_end(ctx)
+            scrolled = True
+        box = _find_box(ctx)
         if box is None:
-            ctx.log(f"research: no available box in view, {started} started")
+            ctx.log(f"research: no available box, {started} started")
             break
         ctx.log(f"research: starting box at {box[0]},{box[1]}")
         nav.click(ctx, _centre(box), 800)

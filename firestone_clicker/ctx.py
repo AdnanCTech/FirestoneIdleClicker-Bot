@@ -1,4 +1,4 @@
-"""The four side effects (grab, click, key, sleep) behind one object so features are testable."""
+"""The side effects (grab, click/move/drag, key, sleep) behind one object so features are testable."""
 
 from __future__ import annotations
 
@@ -31,6 +31,9 @@ class Ctx:
         raise NotImplementedError
 
     def click(self, x: int, y: int) -> None:
+        raise NotImplementedError
+
+    def drag(self, x1: int, y1: int, x2: int, y2: int) -> None:
         raise NotImplementedError
 
     def key(self, name: str) -> None:
@@ -117,6 +120,22 @@ class LiveCtx(Ctx):
         m.position = self._screen(x, y)
         m.click(self._Button.left)
 
+    def drag(self, x1: int, y1: int, x2: int, y2: int) -> None:
+        if self.dry_run:
+            self.log(f"dry: drag {x1},{y1} -> {x2},{y2}")
+            return
+        m, _ = self._devices()
+        m.position = self._screen(x1, y1)
+        time.sleep(0.15)
+        m.press(self._Button.left)
+        time.sleep(0.15)
+        steps = 20  # Unity needs the pointer to travel, not jump, to treat it as a pan
+        for i in range(1, steps + 1):
+            m.position = self._screen(x1 + (x2 - x1) * i // steps, y1 + (y2 - y1) * i // steps)
+            time.sleep(0.02)
+        time.sleep(0.15)
+        m.release(self._Button.left)
+
     def key(self, name: str) -> None:
         if self.dry_run:
             self.log(f"dry: key {name}")
@@ -155,6 +174,7 @@ class FakeCtx(Ctx):
         self.screens = screens
         self.i = 0
         self.clicks: list[tuple[int, int]] = []
+        self.drags: list[tuple[int, int, int, int]] = []
         self.moves: list[tuple[int, int]] = []
         self.keys: list[str] = []
         self.key_holds: list[tuple[str, int]] = []
@@ -170,6 +190,11 @@ class FakeCtx(Ctx):
 
     def click(self, x: int, y: int) -> None:
         self.clicks.append((x, y))
+        if self.i + 1 < len(self.screens):
+            self.i += 1
+
+    def drag(self, x1: int, y1: int, x2: int, y2: int) -> None:
+        self.drags.append((x1, y1, x2, y2))
         if self.i + 1 < len(self.screens):
             self.i += 1
 
