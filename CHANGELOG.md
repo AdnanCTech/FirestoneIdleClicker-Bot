@@ -3,6 +3,23 @@
 The section for a version becomes the GitHub release notes. Write it for players, not for
 developers: what the bot now does differently, what was fixed, what to change in settings.
 
+## 0.1.2 - 2026-11-06
+
+**Fixed**
+- Map: missions at the far right of the map (the Celenis island) were never opened; the
+  scan now reaches them.
+- Map: the "Your squads are idling" banner could look like a row of mission pins when it
+  sat high on the screen. The scan now stops at the banner's top edge.
+- Map: Scout and other small pins were found only now and then (2 frames in 8). Pins are
+  now judged by their real pixels, so every mission on screen is found every time.
+- Research: a start that hits the "slots full" dialog is no longer logged as started.
+
+**Changed**
+- Research: starts are spread across the tree instead of always going to the top box.
+  The bot drags the tree to its right end, picks the rightmost column that has available
+  research, and within it the one with the lowest level. Columns unlock on levels in the
+  column before, so this pushes the tree forward evenly.
+
 ## 0.1.1 - 2026-11-05
 
 Map missions only. Everything else is unchanged.
