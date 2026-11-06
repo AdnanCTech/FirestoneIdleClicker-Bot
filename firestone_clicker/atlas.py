@@ -234,7 +234,10 @@ MAP_ICON_STAND = (0xE6DDB5, 16, 8)
 # A stand is at least this wide and tall; a shorter one counts only when it touches the bottom
 # of the scan area, where the "squads are idling" banner hides the rest of it (the naval icon
 # at y 964 lost all but 7 rows). Smaller specks (mountain highlights) are dropped.
-MAP_ICON_STAND_MIN = 11
+# A stand is a downward triangle, 16-20 px wide at its top row and ~100 px in all (live
+# 2026-11-06). The cell grid trims its tail unpredictably, so blobs are checked by real
+# pixels: (min top-row width, min matching px). A 7x7 speck has 49 px, 7 wide.
+MAP_ICON_STAND_SHAPE = (13, 50)
 MAP_ICON_ABOVE_STAND = 35
 # Game names per icon: scope = Scout, scroll = Adventure, sword = War, paw = Monster,
 # dragon = Dragon, wheel = Naval, volcano = Titan (locked until 5B gear power, never seen).

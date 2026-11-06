@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (77 tests, ~3 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (78 tests, ~3 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -62,7 +62,8 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   the higher point sat under a neighbour's animated flags and opened the wrong popup. The
   idle banner's cream gradient matches the stand colour and the banner moves (top seen at y 944
   and 971), so the scan stops at the banner top found on `MAP_BANNER_COLUMN` and a stand cut
-  off there still counts (`MAP_ICON_STAND_MIN`). Scan runs to x 1770: Celenis icons sit at 1720. Mission names by icon: scope Scout, scroll Adventure, sword War,
+  off there still counts. Stands are checked by real pixels (`MAP_ICON_STAND_SHAPE`), not blob
+  height: the 4 px cell grid trims the pin's tail to 7 rows in most frames. Scan runs to x 1770: Celenis icons sit at 1720. Mission names by icon: scope Scout, scroll Adventure, sword War,
   paw Monster, dragon Dragon, wheel Naval, volcano Titan (locked, never seen). Monster, Naval
   and Dragon are opened first (`MAP_PRIORITY`, kind from disc colours above the stand). Gated by the idle banner; the map is never dragged. "N/27"
   at the top is idle squads; the bot cannot read "Required squads", so a mission short of

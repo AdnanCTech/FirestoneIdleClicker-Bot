@@ -65,16 +65,21 @@ def available_icons(ctx: Ctx) -> list[tuple[int, int]]:
     area = atlas.MAP_ICON_AREA
     color, var, min_px = atlas.MAP_ICON_STAND
     img = ctx.grab(area)
-    banner = _banner_rows(img, area)
-    bottom = area[3] - banner  # stands cut off by the banner end here, not at the area edge
-    img = img[: len(img) - banner]
+    img = img[: len(img) - _banner_rows(img, area)]  # the banner's gradient matches the stand colour
+    mask = vision.match_mask(img, color, var)
+    min_w, min_total = atlas.MAP_ICON_STAND_SHAPE
     found: list[tuple[int, int, int]] = []
     for x1, y1, x2, y2 in vision.blobs(img, (area[0], area[1]), color, var, min_px, cell=4):
-        if x2 - x1 < atlas.MAP_ICON_STAND_MIN or (y2 - y1 < atlas.MAP_ICON_STAND_MIN and y2 < bottom - 4):
+        # The cell grid trims the stand's tail, so measure the real pixels around the blob.
+        sy, sx = max(0, y1 - area[1] - 4), max(0, x1 - area[0] - 4)
+        sub = mask[sy : y2 - area[1] + 5, sx : x2 - area[0] + 5]
+        rows = sub.sum(axis=1)
+        if int(rows.sum()) < min_total or int(rows.max()) < min_w:
             continue
-        x, y = (x1 + x2) // 2, y1 - atlas.MAP_ICON_ABOVE_STAND
+        top = area[1] + sy + int(rows.argmax())  # widest row is the stand's top edge
+        x, y = (x1 + x2) // 2, top - atlas.MAP_ICON_ABOVE_STAND
         if all(abs(x - ox) > atlas.MAP_ICON_MERGE or abs(y - oy) > atlas.MAP_ICON_MERGE for _, ox, oy in found):
-            kind = _kind(img, x - area[0], y1 - area[1])
+            kind = _kind(img, x - area[0], top - area[1])
             rank = atlas.MAP_PRIORITY.index(kind) if kind in atlas.MAP_PRIORITY else len(atlas.MAP_PRIORITY)
             found.append((rank, x, y))
     found.sort(key=lambda f: f[0])  # stable: within a rank the blob order (top to bottom) holds

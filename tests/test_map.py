@@ -191,3 +191,37 @@ def test_idle_banner_gradient_is_not_a_row_of_pins():
     paint(s, (1032, 937, 1047, 944), 0xE6DDB5)  # stand with only 7 rows above the banner
     paint(s, (1040 - 25, 902 - 25, 1040 + 25, 902 + 25), 0x135696)
     assert _near(map_missions.available_icons(FakeCtx([s])), [(1040, 902)])
+
+
+SCOUT_PIN = (  # the Scout mission's pin stand, pixel for pixel, live 2026-11-06 at x 792, y 451
+    "################",
+    ".#############..",
+    "..############..",
+    "..###########...",
+    "...##########...",
+    "...#########....",
+    "....#######.....",
+    ".....######.....",
+    ".....#####......",
+    "......####......",
+    ".......##.......",
+    ".......#........",
+)
+
+
+def _pin(s, left, top, bitmap=SCOUT_PIN):
+    for dy, row in enumerate(bitmap):
+        for dx, ch in enumerate(row):
+            if ch == "#":
+                paint(s, (left + dx, top + dy, left + dx, top + dy), 0xE6DDB5)
+
+
+def test_real_shaped_stand_detected_whatever_the_cell_alignment():
+    # The 4 px cell grid trims the pin's thin tail: in 6 of 8 live frames the blob was only
+    # 7 rows tall and the old height filter dropped the Scout mission.
+    for left, top in ((792, 451), (793, 452), (794, 451), (792, 453)):
+        s = _map()
+        paint(s, (left + 8 - 25, top - 60, left + 8 + 25, top - 10), 0xF07070)
+        _pin(s, left, top)
+        got = map_missions.available_icons(FakeCtx([s]))
+        assert _near(got, [(left + 8, top - atlas.MAP_ICON_ABOVE_STAND)]), (left, top, got)
