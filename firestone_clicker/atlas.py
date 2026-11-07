@@ -197,6 +197,8 @@ RS_BAR_INSET = (100, 15)
 RS_BAR_FILL = (0xEFCF2C, 24)
 RS_BAR_TRACK = (0x172874, 12)
 RS_COLUMN_GAP = 60
+RS_LOCKED = (0x919DB2, 20)  # flat grey of a "Locked" box; everything right of one is locked too
+RS_RUNNING_BUTTON = (0xED913F, 24)  # orange "Speed up" in a busy slot of the strip (live 2026-11-06)
 # The tree pans by dragging and keeps its position when reopened (live 2026-11-06: a 455 px
 # drag moved it ~520 px, columns are ~465 px apart). Drags run along y 840, an empty band
 # between the lowest box row and the slot strip, so a drag can never land on a box.

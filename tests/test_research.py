@@ -181,3 +181,51 @@ def test_start_that_hits_slots_full_is_not_logged_as_started():
     research.run(c, Config())
     assert "research: started" not in c.logs and "research: slots full" in c.logs, c.logs
     assert (1370, 355) in c.clicks
+
+
+def _busy_strip(s):
+    """Both slots running: an orange "Speed up" button in each (0xED913F live 2026-11-06)."""
+    paint(s, (535, 890, 695, 975), 0xED913F)
+    paint(s, (1180, 890, 1340, 975), 0xED913F)
+
+
+def _locked_box(s, x1, y1):
+    """A locked box: flat grey 0x919DB2 with white "Locked" text (live 2026-11-06)."""
+    paint(s, (x1, y1, x1 + 383, y1 + 101), 0x919DB2)
+    paint(s, (x1 + 150, y1 + 20, x1 + 340, y1 + 45), 0xF8F8F8)
+    paint(s, (x1 + 180, y1 + 60, x1 + 290, y1 + 85), 0xF8F8F8)
+
+
+def test_both_slots_busy_skips_the_tree():
+    # Only two researches can run at once, so with both slots busy there is nothing to do.
+    s = _library()
+    _tree_box(s, 680, 222)
+    _busy_strip(s)
+    c = FakeCtx([s] * 10)
+    research.run(c, Config())
+    assert c.drags == [] and not _in_band(c.clicks, 680, 222, 1063, 323)
+    assert "research: both slots busy" in c.logs, c.logs
+
+
+def test_locked_box_in_view_stops_the_scroll_right():
+    # Everything beyond a locked box is locked too, so there is no point panning past it.
+    s = _library()
+    _tree_box(s, 225, 224)
+    _locked_box(s, 680, 320)
+    # town, tree, box click -> popup
+    c = FakeCtx([s, s, s, _popup()] + [_library()] * 10)
+    research.run(c, Config())
+    assert (900, 840, 445, 840) not in c.drags, c.drags
+    assert _in_band(c.clicks, 225, 224, 608, 325)
+
+
+def test_first_start_filling_the_second_slot_ends_the_pass():
+    s = _library()
+    _tree_box(s, 680, 222)
+    busy = s.copy()
+    _busy_strip(busy)
+    # town, tree, drag (no change), box click -> popup, green click -> strip shows both running
+    c = FakeCtx([s, s, s, s, _popup(), busy] + [busy] * 10)
+    research.run(c, Config())
+    assert c.logs.count("research: started") == 1 and "research: both slots busy" in c.logs, c.logs
+    assert sum(1 for p in c.clicks if 680 <= p[0] <= 1063 and 222 <= p[1] <= 323) == 1

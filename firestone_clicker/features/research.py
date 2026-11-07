@@ -39,6 +39,20 @@ def available_boxes(ctx: Ctx) -> list[Rect]:
     return vision.blobs(img, origin, atlas.RS_AVAILABLE, atlas.RS_AVAILABLE_VAR, atlas.RS_BOX_MIN_H)
 
 
+def running_slots(ctx: Ctx) -> int:
+    """Slots in the strip that show an orange "Speed up" button (a research in progress)."""
+    img = ctx.grab(atlas.RS_SLOT_STRIP)
+    origin = (atlas.RS_SLOT_STRIP[0], atlas.RS_SLOT_STRIP[1])
+    found = vision.blobs(img, origin, *atlas.RS_RUNNING_BUTTON, atlas.RS_BUTTON_MIN_H)
+    return sum(1 for x1, y1, x2, y2 in found if x2 - x1 >= atlas.RS_BUTTON_MIN_W and y2 - y1 >= atlas.RS_BUTTON_MIN_H)
+
+
+def _locked_in_view(img: np.ndarray) -> bool:
+    origin = (atlas.RS_TREE_AREA[0], atlas.RS_TREE_AREA[1])
+    found = vision.blobs(img, origin, *atlas.RS_LOCKED, atlas.RS_BOX_MIN_H)
+    return any(y2 - y1 >= atlas.RS_BOX_MIN_H for _, y1, _, y2 in found)
+
+
 def _bar_fill(img, origin: tuple[int, int], box: Rect) -> float:
     """Share of the box's progress bar that is filled (0.0 when the bar is not found)."""
     x1, y1, x2, y2 = box
@@ -85,6 +99,8 @@ def _changed(before: np.ndarray, after: np.ndarray) -> bool:
 def _scroll_to_end(ctx: Ctx) -> None:
     view = ctx.grab(atlas.RS_TREE_AREA)
     for _ in range(atlas.RS_MAX_DRAGS):
+        if _locked_in_view(view):  # nothing right of a locked box can be started
+            return
         after = _drag(ctx, to_right_end=True)
         if not _changed(view, after):
             return
@@ -150,6 +166,9 @@ def run(ctx: Ctx, cfg: Config) -> None:
     started = 0
     scrolled = False
     for _ in range(atlas.RS_MAX_STARTS):
+        if running_slots(ctx) >= atlas.RS_SLOT_COUNT:
+            ctx.log("research: both slots busy")
+            break
         if _slots_full(ctx):
             nav.click(ctx, atlas.RS_SLOTS_FULL_CLOSE, 800)
             ctx.log("research: slots full")
