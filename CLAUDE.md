@@ -10,6 +10,8 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   Lutakh/firestone-bot). Repo name differs from the exe name on purpose; leave both.
 - Users get `FirestoneClicker-<version>-win64.zip` from Releases (exe + default `settings.toml`
   + README + LICENSE). First release v0.1.0 on 2026-11-04, CI-built zip verified on the live game.
+  v0.1.3 (2026-11-11) added the scheduled features (arena, pickaxes, daily missions, loot,
+  engineer); its CI zip was not run against the live game, only the same source was.
 - `.github/workflows/release.yml`: every push runs pytest; a `v*` tag also builds the exe with
   PyInstaller and attaches the zip. Actions are pinned to commit SHAs.
 - To release: bump `__version__` in `firestone_clicker/__init__.py`, add a `## X.Y.Z - date`
