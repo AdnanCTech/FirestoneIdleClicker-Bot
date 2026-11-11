@@ -302,3 +302,25 @@ PTREE_NODES = (
     ("Damage", Point(1404, 440)),
     ("Heal", Point(1572, 492)),
 )
+
+# Arena of Kings (town, Battles, right card). Measured live 2026-11-11. Three opponents sit
+# strongest to weakest left to right; the top counter is attempts left today (resets ~9am).
+ARENA_BATTLES = Point(355, 317)
+ARENA_BATTLES_X = Probe(1310, 252, 1320, 262, DIALOG_X_CROSS, 30, "arena_battles_x")
+ARENA_CARD = Point(1145, 532)
+ARENA_OPEN = Probe(1540, 880, 1580, 895, 0x0D87FF, 30, "arena_open")  # blue "Battle log"
+ARENA_CLOSE = Point(1800, 142)  # the arena's own X; BIG_CLOSE is not on this screen
+ARENA_FIGHT_BAND = (560, 615, 1360, 675)
+ARENA_FIGHT_MIN_W = 120
+ARENA_BATTLE = Point(960, 582)  # red crossed-swords button of the battle window
+ARENA_BATTLE_RECT = (880, 502, 1040, 662)
+ARENA_BATTLE_BUTTON = Probe(910, 577, 930, 587, 0xD34429, 30, "arena_battle_button")
+ARENA_OK_BAND = (600, 700, 1320, 860)  # green OK of the result popup (833..1086 x 753..816)
+ARENA_POPUP_X_BAND = (1100, 150, 1700, 450)
+ARENA_MAX_FIGHTS = 5
+ARENA_OPEN_MS = 5000
+ARENA_FIGHT_MAX_MS = 180000  # the longest fight seen took about 2 minutes
+ARENA_POLL_MS = 3000
+# Cream panel right of the "N/5" counter; at 0/5 a green "+" covers it (seen dimmed under the
+# token popup only, so the probe looks for the cream, not the green).
+ARENA_HAS_ATTEMPTS = Probe(1447, 147, 1457, 157, 0xDCC0A5, 20, "arena_has_attempts")

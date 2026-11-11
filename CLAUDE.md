@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (86 tests, ~5 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (94 tests, ~6 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -83,8 +83,18 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   start, so the strip is trusted over the slots-full dialog). A grey "Locked" box in view
   (`RS_LOCKED`) stops the drag to the right: everything beyond it is locked too.
 
+- Arena of Kings (`features/arena.py`, town > Battles > right card): three opponents sit
+  strongest to weakest left to right and `[arena] opponent` (1 to 3) picks the Fight button by
+  position. One visit uses every attempt: Fight, the red battle button (gem-checked), poll
+  up to 3 min for the green OK, repeat, hard cap 5. The "N/5" counter is attempts left; at 0/5
+  a green "+" replaces the cream panel beside it (`ARENA_HAS_ATTEMPTS` probes the cream) and
+  Fight would open a "5 tokens for 1000" offer with a green Confirm that spends arena tokens:
+  never press it, the fallback closes it by its X. The arena has its own X at (1800,142); the
+  game's x4 battle speed is remembered and not touched. A loss popup has not been seen yet.
+
 ## Known gaps
 - Oracle "Claim" state and reward popup not yet seen live.
+- Arena loss popup not yet seen live (the OK poll accepts any wide green button).
 
 # context-mode — MANDATORY routing rules
 

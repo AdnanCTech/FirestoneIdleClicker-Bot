@@ -10,7 +10,7 @@ from pathlib import Path
 from firestone_clicker import nav
 from firestone_clicker.config import Config
 from firestone_clicker.ctx import Ctx, Stopped
-from firestone_clicker.features import alchemist, guardian, guild, heroes, map_missions, oracle, research
+from firestone_clicker.features import alchemist, arena, guardian, guild, heroes, map_missions, oracle, research
 
 Feature = Callable[[Ctx, Config], None]
 FEATURES: list[tuple[str, Feature]] = [
@@ -21,6 +21,7 @@ FEATURES: list[tuple[str, Feature]] = [
     ("oracle", oracle.run),
     ("research", research.run),
     ("map_missions", map_missions.run),
+    ("arena", arena.run),
 ]
 GUILD_KEYS = ("expeditions", "awaken", "ptree")
 MAX_HOME_FAILURES = 3

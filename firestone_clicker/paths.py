@@ -20,6 +20,7 @@ research = true
 heroes = true
 guardian = true
 oracle = true
+arena = true
 
 # Which alchemist experiments to start.
 [alchemist]
@@ -42,6 +43,10 @@ special = true
 evolve = true
 train = true
 train_target = 1
+
+# Arena of Kings: which opponent to fight, 1 (strongest) to 3 (weakest), every attempt each day.
+[arena]
+opponent = 3
 
 # Personal tree nodes to buy (only when features.ptree is true).
 [ptree]

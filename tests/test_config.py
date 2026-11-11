@@ -21,3 +21,18 @@ def test_rejects_bad_train_target(tmp_path):
     (tmp_path / "s.toml").write_text("[guardian]\ntrain_target = 7\n")
     with pytest.raises(ValueError):
         config.load(tmp_path / "s.toml")
+
+
+def test_arena_opponent_range(tmp_path):
+    from firestone_clicker import config
+
+    p = tmp_path / "s.toml"
+    p.write_text("[arena]\nopponent = 2\n", encoding="utf-8")
+    assert config.load(p).arena_opponent == 2
+    p.write_text("[arena]\nopponent = 4\n", encoding="utf-8")
+    try:
+        config.load(p)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("opponent 4 accepted")

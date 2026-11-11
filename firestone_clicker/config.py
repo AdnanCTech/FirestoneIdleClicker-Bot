@@ -14,6 +14,7 @@ FEATURE_KEYS = (
     "heroes",
     "guardian",
     "oracle",
+    "arena",
 )
 ALCHEMIST_KEYS = ("dragon_blood", "strange_dust", "exotic_coins")
 HERO_KEYS = ("h1", "h2", "h3", "h4", "h5", "guardian", "special")
@@ -37,6 +38,7 @@ class Config:
     guardian_train: bool = True
     guardian_train_target: int = 1
     ptree: dict[str, bool] = field(default_factory=lambda: _all_on(PTREE_KEYS))
+    arena_opponent: int = 3
 
 
 def _merge(target: dict[str, bool], src: dict, section: str) -> None:
@@ -62,4 +64,7 @@ def load(path: Path) -> Config:
     cfg.guardian_train_target = int(g.get("train_target", cfg.guardian_train_target))
     if not 1 <= cfg.guardian_train_target <= 4:
         raise ValueError("guardian.train_target must be 1 to 4")
+    cfg.arena_opponent = int(data.get("arena", {}).get("opponent", cfg.arena_opponent))
+    if not 1 <= cfg.arena_opponent <= 3:
+        raise ValueError("arena.opponent must be 1 to 3")
     return cfg
