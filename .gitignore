@@ -7,3 +7,4 @@ diag/
 bot.log
 build/
 dist/
+state.json

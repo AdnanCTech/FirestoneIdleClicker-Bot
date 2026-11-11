@@ -5,9 +5,10 @@ from __future__ import annotations
 import time
 import traceback
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
-from firestone_clicker import nav
+from firestone_clicker import nav, schedule
 from firestone_clicker.config import Config
 from firestone_clicker.ctx import Ctx, Stopped
 from firestone_clicker.features import alchemist, arena, guardian, guild, heroes, map_missions, oracle, research
@@ -24,6 +25,8 @@ FEATURES: list[tuple[str, Feature]] = [
     ("arena", arena.run),
 ]
 GUILD_KEYS = ("expeditions", "awaken", "ptree")
+# Features that run once per window (hours from the config); the feature returns True when done.
+SCHEDULED: dict[str, Callable[[Config], list[int]]] = {"arena": lambda cfg: cfg.arena_run_at}
 MAX_HOME_FAILURES = 3
 
 
@@ -44,17 +47,27 @@ def _diag(ctx: Ctx, name: str) -> None:
         ctx.log(f"diag capture failed: {e}")
 
 
-def run_cycle(ctx: Ctx, cfg: Config, only: str | None = None) -> bool:
+def run_cycle(
+    ctx: Ctx,
+    cfg: Config,
+    only: str | None = None,
+    state: schedule.State | None = None,
+    now: Callable[[], datetime] = datetime.now,
+) -> bool:
     """One pass over the features. Returns False when go_home failed at the end."""
     for name, feature in FEATURES:
         if only is not None and name != only:
             continue
         if only is None and not enabled(name, cfg):
             continue
+        win = schedule.window(SCHEDULED[name](cfg), now()) if name in SCHEDULED and only is None else None
+        if win is not None and state is not None and state.done(name, win):
+            continue
         ctx.log(f"--- {name}")
         t0 = time.monotonic()
         try:
-            feature(ctx, cfg)
+            if feature(ctx, cfg) is True and win is not None and state is not None:
+                state.mark(name, win)
         except Stopped:
             raise
         except Exception:
@@ -73,6 +86,7 @@ def main(
     once: str | None,
     single_cycle: bool = False,
     window_ok: Callable[[], bool] = lambda: True,
+    state: schedule.State | None = None,
 ) -> bool:
     """Run cycles until stopped. False means the bot gave up (window lost or stuck)."""
     failures = 0
@@ -81,7 +95,7 @@ def main(
             if not window_ok():
                 ctx.log("exit: game window gone or not in front")
                 return False
-            if run_cycle(ctx, cfg, once):
+            if run_cycle(ctx, cfg, once, state):
                 failures = 0
             else:
                 failures += 1

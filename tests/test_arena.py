@@ -56,7 +56,7 @@ def test_fights_configured_opponent_until_the_battle_window_stops_opening():
     fight = [_battle(), _won(), _opponents()]
     stuck = _opponents()
     c = FakeCtx([_town(), _battles(), _opponents()] + fight * 2 + [stuck] * 10)
-    arena.run(c, _cfg(3))
+    assert arena.run(c, _cfg(3)) is True
     assert c.clicks.count((1221, 643)) == 3 and (960, 582) in c.clicks
     assert c.logs.count("arena: won") == 2 and "arena: battle window did not open, done for today" in c.logs
     assert (698, 643) not in c.clicks and (960, 643) not in c.clicks
@@ -77,7 +77,7 @@ def test_never_more_than_five_fights_per_visit():
 def test_fight_that_never_ends_is_abandoned():
     running = blank()
     c = FakeCtx([_town(), _battles(), _opponents(), _battle()] + [running] * 10)
-    arena.run(c, _cfg(3))
+    assert arena.run(c, _cfg(3)) is False
     assert "arena: fight did not end" in c.logs and c.clicks.count((960, 582)) == 1
 
 
@@ -91,7 +91,7 @@ def test_red_button_with_a_gem_is_not_pressed():
 
 def test_arena_not_open_gives_up():
     c = FakeCtx([_town(), _battles()] + [_town()] * 10)
-    arena.run(c, _cfg(3))
+    assert arena.run(c, _cfg(3)) is False
     assert "arena: did not open" in c.logs and not any(y == 643 for _, y in c.clicks)
 
 
@@ -101,5 +101,5 @@ def test_green_plus_at_zero_attempts_means_no_fight():
     s = _opponents()
     paint(s, atlas.ARENA_HAS_ATTEMPTS.rect, 0x5CB31A)
     c = FakeCtx([_town(), _battles(), s] + [s] * 10)
-    arena.run(c, _cfg(3))
+    assert arena.run(c, _cfg(3)) is True
     assert "arena: no attempts left" in c.logs and (1221, 643) not in c.clicks

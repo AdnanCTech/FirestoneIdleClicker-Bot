@@ -44,9 +44,11 @@ evolve = true
 train = true
 train_target = 1
 
-# Arena of Kings: which opponent to fight, 1 (strongest) to 3 (weakest), every attempt each day.
+# Arena of Kings: which opponent to fight, 1 (strongest) to 3 (weakest). Attempts reset once a
+# day, so the arena is visited once after each hour in run_at (24h clock) and skipped otherwise.
 [arena]
 opponent = 3
+run_at = [1, 13]
 
 # Personal tree nodes to buy (only when features.ptree is true).
 [ptree]

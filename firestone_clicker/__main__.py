@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-from firestone_clicker import __version__, check, config, loop, paths, win
+from firestone_clicker import __version__, check, config, loop, paths, schedule, win
 from firestone_clicker.ctx import LiveCtx, install_hotkey
 
 
@@ -103,7 +103,8 @@ def main() -> int:
     import os
 
     os.chdir(base)  # diag/ captures from loop.py land next to the exe
-    ok = loop.main(ctx, cfg, once=args.once, single_cycle=args.dry_run, window_ok=window_ok)
+    state = schedule.State(base / "state.json")
+    ok = loop.main(ctx, cfg, once=args.once, single_cycle=args.dry_run, window_ok=window_ok, state=state)
     if not ok:
         _pause_if_frozen()
     return 0 if ok else 1

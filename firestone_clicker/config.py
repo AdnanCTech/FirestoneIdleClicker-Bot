@@ -39,6 +39,7 @@ class Config:
     guardian_train_target: int = 1
     ptree: dict[str, bool] = field(default_factory=lambda: _all_on(PTREE_KEYS))
     arena_opponent: int = 3
+    arena_run_at: list[int] = field(default_factory=lambda: [1, 13])
 
 
 def _merge(target: dict[str, bool], src: dict, section: str) -> None:
@@ -67,4 +68,7 @@ def load(path: Path) -> Config:
     cfg.arena_opponent = int(data.get("arena", {}).get("opponent", cfg.arena_opponent))
     if not 1 <= cfg.arena_opponent <= 3:
         raise ValueError("arena.opponent must be 1 to 3")
+    cfg.arena_run_at = [int(h) for h in data.get("arena", {}).get("run_at", cfg.arena_run_at)]
+    if not cfg.arena_run_at or any(not 0 <= h <= 23 for h in cfg.arena_run_at):
+        raise ValueError("arena.run_at must list hours 0 to 23")
     return cfg

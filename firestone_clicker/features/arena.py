@@ -49,13 +49,14 @@ def _close(ctx: Ctx) -> None:
     nav.big_close(ctx, 800)
 
 
-def _fight(ctx: Ctx, button: Rect) -> bool:
-    """One attempt: Fight, the red button, wait for the result, OK. False when the pass must stop."""
+def _fight(ctx: Ctx, button: Rect) -> bool | None:
+    """One attempt: Fight, the red button, wait for the result, OK.
+    True = fought, None = out of attempts (Fight opened something else), False = give up for now."""
     nav.click(ctx, _centre(button), 1000)
     if not nav.wait_for(ctx, atlas.ARENA_BATTLE_BUTTON, atlas.ARENA_OPEN_MS):
         ctx.log("arena: battle window did not open, done for today")  # e.g. the 1000-token offer
         _diag(ctx, "arena_no_battle")
-        return False
+        return None
     if not nav.safe_click(ctx, atlas.ARENA_BATTLE, atlas.ARENA_BATTLE_RECT, 1000):
         return False
     ok = _wait_ok(ctx)
@@ -67,24 +68,34 @@ def _fight(ctx: Ctx, button: Rect) -> bool:
     return nav.safe_click(ctx, _centre(ok), ok, 1500)
 
 
-def run(ctx: Ctx, cfg: Config) -> None:
+def run(ctx: Ctx, cfg: Config) -> bool:
+    """True when the day's attempts are used up: the loop then skips the arena until the next window."""
     if not nav.require_screen(ctx, atlas.ARENA_BATTLES, atlas.ARENA_BATTLES_X, via_town=True):
-        return
+        return False
     nav.click(ctx, atlas.ARENA_CARD, 1000)
     if not nav.wait_for(ctx, atlas.ARENA_OPEN):
         ctx.log("arena: did not open")
-        return
+        return False
     fights = 0
+    done = False
     while fights < atlas.ARENA_MAX_FIGHTS:
         if not nav.found(ctx, atlas.ARENA_HAS_ATTEMPTS):
             ctx.log("arena: no attempts left")
+            done = True
             break
         buttons = fight_buttons(ctx)
         if len(buttons) < cfg.arena_opponent:
             ctx.log(f"arena: {len(buttons)} Fight button(s), wanted position {cfg.arena_opponent}")
             break
-        if not _fight(ctx, buttons[cfg.arena_opponent - 1]):
+        outcome = _fight(ctx, buttons[cfg.arena_opponent - 1])
+        if outcome is None:
+            done = True
+            break
+        if not outcome:
             break
         fights += 1
+    else:
+        done = True
     ctx.log(f"arena: {fights} fight(s)")
     _close(ctx)
+    return done

@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (94 tests, ~6 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (100 tests, ~6 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -46,6 +46,10 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   `require_screen`, `find_dialog_x`.
 - `features/*.py` one `run(ctx, cfg)` each. `loop.py` cycle order and exit rules.
 - `settings.toml` is the only config; `config.py` rejects unknown keys in known sections.
+- `schedule.py` runs a feature once per window: `loop.SCHEDULED` maps a feature to its config
+  hours, `schedule.window` names the window (latest hour at or before now, crossing midnight),
+  `State` keeps finished windows in `state.json` next to the exe (git-ignored). The feature
+  returns True when it is done for the window; False retries next cycle. `--once` ignores it.
 
 ## Rules learned the hard way
 - Logical coords == screen coords only when the client origin is (0,31); `LiveCtx.offset`
@@ -91,6 +95,8 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   Fight would open a "5 tokens for 1000" offer with a green Confirm that spends arena tokens:
   never press it, the fallback closes it by its X. The arena has its own X at (1800,142); the
   game's x4 battle speed is remembered and not touched. A loss popup has not been seen yet.
+  Visited once per `[arena] run_at` window (default 1 and 13 o'clock: attempts reset once a
+  day around 9am, two windows give a second chance) via `schedule.py`.
 
 ## Known gaps
 - Oracle "Claim" state and reward popup not yet seen live.

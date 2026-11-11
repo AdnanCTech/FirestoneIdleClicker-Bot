@@ -36,3 +36,18 @@ def test_arena_opponent_range(tmp_path):
         pass
     else:
         raise AssertionError("opponent 4 accepted")
+
+
+def test_arena_run_at_hours(tmp_path):
+    from firestone_clicker import config
+
+    p = tmp_path / "s.toml"
+    p.write_text("[arena]\nrun_at = [1, 13]\n", encoding="utf-8")
+    assert config.load(p).arena_run_at == [1, 13]
+    p.write_text("[arena]\nrun_at = [24]\n", encoding="utf-8")
+    try:
+        config.load(p)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("hour 24 accepted")

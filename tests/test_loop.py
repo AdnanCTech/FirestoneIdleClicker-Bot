@@ -95,3 +95,36 @@ def test_guild_entry_gated_by_any_of_three(monkeypatch):
     assert loop.enabled("guild", cfg) is False
     cfg.features["awaken"] = True
     assert loop.enabled("guild", cfg) is True
+
+
+def test_scheduled_feature_runs_once_per_window_and_only_when_it_reports_done(monkeypatch, tmp_path):
+    from datetime import datetime
+
+    from firestone_clicker import schedule
+
+    calls = []
+    results = iter([False, True])
+    monkeypatch.setattr(loop, "FEATURES", [("arena", lambda c, f: (calls.append("arena"), next(results))[1])])
+    cfg = Config()
+    cfg.features["arena"] = True
+    cfg.arena_run_at = [1, 13]
+    state = schedule.State(tmp_path / "state.json")
+    now = datetime(2026, 11, 11, 13, 5)
+    for _ in range(3):  # first run not done (retry), second done, third skipped
+        loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: now)
+    assert calls == ["arena", "arena"]
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: datetime(2026, 11, 12, 1, 0))
+    assert calls == ["arena", "arena", "arena"]
+
+
+def test_once_ignores_the_schedule(monkeypatch, tmp_path):
+    from firestone_clicker import schedule
+
+    calls = []
+    monkeypatch.setattr(loop, "FEATURES", [("arena", lambda c, f: calls.append("arena") or True)])
+    state = schedule.State(tmp_path / "state.json")
+    state.mark("arena", "2026-11-11 13")
+    from datetime import datetime
+
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), Config(), only="arena", state=state, now=lambda: datetime(2026, 11, 11, 13, 5))
+    assert calls == ["arena"]
