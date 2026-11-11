@@ -15,6 +15,14 @@ map, and never reads game memory or talks to the network.
 - Research: claims finished research and starts any available one in view.
 - Map: claims finished missions and starts new ones while squads are idle.
 
+A few things only need doing a couple of times a day. They run at the hours set in their
+`run_at` list and are remembered in `state.json`, so a restart does not repeat them:
+
+- Arena of Kings: fights the opponent position you choose until the day's attempts are used.
+- Free pickaxes: claims them from the guild market's Supplies tab.
+- Daily missions: clears both Dungeon fights and every Liberation card.
+- Campaign loot and Engineer: claim their chests when the 6 hour timers are up.
+
 Then it pauses (60 seconds by default) and goes again.
 
 ## Requirements
@@ -43,7 +51,8 @@ The bot owns the mouse and keyboard while it runs. Do not use the PC for somethi
 same time: keystrokes meant for the game would land in whatever window you clicked.
 
 `settings.toml` controls which features run, which hero slots, alchemist experiments or tree
-nodes to use, which guardian to train, and the pause between cycles. Changes apply the next
+nodes to use, which guardian to train, the arena opponent, the hours for the once-a-day
+features, and the pause between cycles. Changes apply the next
 time you start the bot. If you delete the file, the next run recreates the defaults.
 
 ### Windows says it protected your PC
@@ -58,7 +67,8 @@ library used for the Win+Esc stop key. If that worries you, the source is right 
 - `FirestoneClicker.exe --check` reports the window it found, the client size, and whether
   the main-screen markers are visible. Run it on the main screen with no dialog open.
 - `FirestoneClicker.exe --once heroes` runs a single feature and exits. Feature names:
-  `heroes`, `guild`, `guardian`, `alchemist`, `oracle`, `research`, `map_missions`.
+  `heroes`, `guild`, `guardian`, `alchemist`, `oracle`, `research`, `map_missions`, `arena`,
+  `pickaxes`, `daily_missions`, `campaign_loot`, `engineer`. `--once` ignores `run_at`.
 - `FirestoneClicker.exe --dry-run` runs one cycle without clicking anything.
 - When a feature fails the bot saves a screenshot in `diag/` and carries on. If it cannot get
   back to the main screen three cycles in a row it stops.

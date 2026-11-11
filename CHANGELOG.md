@@ -3,6 +3,23 @@
 The section for a version becomes the GitHub release notes. Write it for players, not for
 developers: what the bot now does differently, what was fixed, what to change in settings.
 
+## 0.1.3 - 2026-11-11
+
+**New**
+- Arena of Kings: fights the opponent at the position you choose (`[arena] opponent`,
+  1 strongest to 3 weakest) until the day's attempts are used. Never buys attempts.
+- Free pickaxes: claims them from the guild market's Supplies tab.
+- Daily missions: clears both Dungeon fights and every Liberation card.
+- Campaign loot: claims the "Next loot" chest when its timer is up.
+- Engineer: claims the tools production when its timer is up.
+- Scheduling: these run only at the hours listed in their `run_at` setting (arena,
+  pickaxes and daily missions twice a day, loot and engineer four times) and remember
+  what they already did in `state.json`, so a restart does not repeat them.
+
+**Changed**
+- Research: skips the tree when both slots are already busy and stops panning
+  right as soon as a locked box is in view.
+
 ## 0.1.2 - 2026-11-06
 
 **Fixed**
