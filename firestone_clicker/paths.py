@@ -24,6 +24,7 @@ arena = true
 pickaxes = true
 daily_missions = true
 campaign_loot = true
+engineer = true
 
 # Which alchemist experiments to start.
 [alchemist]
@@ -65,6 +66,10 @@ run_at = [1, 13]
 # Campaign "Next loot" chest: fills every 6 hours and does not stack. In each window the bot
 # keeps checking every cycle until the Claim is green and pressed.
 [campaign_loot]
+run_at = [1, 7, 13, 19]
+
+# Engineer "Tools production" Claim: also every 6 hours, same retry rule as campaign_loot.
+[engineer]
 run_at = [1, 7, 13, 19]
 
 # Personal tree nodes to buy (only when features.ptree is true).

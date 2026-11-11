@@ -18,6 +18,7 @@ FEATURE_KEYS = (
     "pickaxes",
     "daily_missions",
     "campaign_loot",
+    "engineer",
 )
 ALCHEMIST_KEYS = ("dragon_blood", "strange_dust", "exotic_coins")
 HERO_KEYS = ("h1", "h2", "h3", "h4", "h5", "guardian", "special")
@@ -46,6 +47,7 @@ class Config:
     pickaxes_run_at: list[int] = field(default_factory=lambda: [1, 13])
     daily_missions_run_at: list[int] = field(default_factory=lambda: [1, 13])
     campaign_loot_run_at: list[int] = field(default_factory=lambda: [1, 7, 13, 19])
+    engineer_run_at: list[int] = field(default_factory=lambda: [1, 7, 13, 19])
 
 
 def _merge(target: dict[str, bool], src: dict, section: str) -> None:
@@ -85,4 +87,5 @@ def load(path: Path) -> Config:
     cfg.pickaxes_run_at = _hours(data, "pickaxes", cfg.pickaxes_run_at)
     cfg.daily_missions_run_at = _hours(data, "daily_missions", cfg.daily_missions_run_at)
     cfg.campaign_loot_run_at = _hours(data, "campaign_loot", cfg.campaign_loot_run_at)
+    cfg.engineer_run_at = _hours(data, "engineer", cfg.engineer_run_at)
     return cfg

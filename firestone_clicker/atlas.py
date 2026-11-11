@@ -359,3 +359,12 @@ DM_VIEW_CHANGE = 0.02
 # (grey while the 6 h timer runs; the green state is assumed GREEN_BUTTON, unseen 2026-11-11).
 CL_CLAIM_BAND = (30, 930, 260, 1005)
 CL_CLAIM_MIN_W = 150
+
+# Engineer tools (town > Engineer > left card). Measured live 2026-11-11. The "Tools production"
+# Claim at 1530..1750 x 666..751 is grey with a countdown while the 6 h timer runs (green unseen).
+ENG_BUILDING = Point(1262, 910)
+ENG_POPUP_X = Probe(1482, 251, 1492, 261, DIALOG_X_CROSS, 30, "eng_popup_x")
+ENG_CARD = Point(600, 532)
+ENG_OPEN = Probe(1740, 346, 1760, 356, 0xE1CEAD, 20, "eng_open")  # beige of the effects panel
+ENG_CLAIM_BAND = (1520, 660, 1760, 755)
+ENG_CLAIM_MIN_W = 150

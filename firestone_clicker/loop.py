@@ -16,6 +16,7 @@ from firestone_clicker.features import (
     arena,
     campaign_loot,
     daily_missions,
+    engineer,
     guardian,
     guild,
     heroes,
@@ -38,6 +39,7 @@ FEATURES: list[tuple[str, Feature]] = [
     ("pickaxes", pickaxes.run),
     ("daily_missions", daily_missions.run),
     ("campaign_loot", campaign_loot.run),
+    ("engineer", engineer.run),
 ]
 GUILD_KEYS = ("expeditions", "awaken", "ptree")
 # Features that run once per window (hours from the config); the feature returns True when done.
@@ -46,6 +48,7 @@ SCHEDULED: dict[str, Callable[[Config], list[int]]] = {
     "pickaxes": lambda cfg: cfg.pickaxes_run_at,
     "daily_missions": lambda cfg: cfg.daily_missions_run_at,
     "campaign_loot": lambda cfg: cfg.campaign_loot_run_at,
+    "engineer": lambda cfg: cfg.engineer_run_at,
 }
 MAX_HOME_FAILURES = 3
 
