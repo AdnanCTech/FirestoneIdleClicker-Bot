@@ -354,3 +354,8 @@ DM_DRAG_X = (1500, 500)
 DM_MAX_DRAGS = 8
 DM_MAX_FIGHTS = 15
 DM_VIEW_CHANGE = 0.02
+
+# Campaign loot: "Next loot" panel bottom left of the Campaign map, Claim at 35..250 x 936..1001
+# (grey while the 6 h timer runs; the green state is assumed GREEN_BUTTON, unseen 2026-11-11).
+CL_CLAIM_BAND = (30, 930, 260, 1005)
+CL_CLAIM_MIN_W = 150
