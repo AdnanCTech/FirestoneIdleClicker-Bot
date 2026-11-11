@@ -16,6 +16,7 @@ FEATURE_KEYS = (
     "oracle",
     "arena",
     "pickaxes",
+    "daily_missions",
 )
 ALCHEMIST_KEYS = ("dragon_blood", "strange_dust", "exotic_coins")
 HERO_KEYS = ("h1", "h2", "h3", "h4", "h5", "guardian", "special")
@@ -42,6 +43,7 @@ class Config:
     arena_opponent: int = 3
     arena_run_at: list[int] = field(default_factory=lambda: [1, 13])
     pickaxes_run_at: list[int] = field(default_factory=lambda: [1, 13])
+    daily_missions_run_at: list[int] = field(default_factory=lambda: [1, 13])
 
 
 def _merge(target: dict[str, bool], src: dict, section: str) -> None:
@@ -79,4 +81,5 @@ def load(path: Path) -> Config:
         raise ValueError("arena.opponent must be 1 to 3")
     cfg.arena_run_at = _hours(data, "arena", cfg.arena_run_at)
     cfg.pickaxes_run_at = _hours(data, "pickaxes", cfg.pickaxes_run_at)
+    cfg.daily_missions_run_at = _hours(data, "daily_missions", cfg.daily_missions_run_at)
     return cfg

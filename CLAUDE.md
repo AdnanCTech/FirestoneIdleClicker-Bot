@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (104 tests, ~6 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (108 tests, ~6 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -104,6 +104,16 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   free card's green Claim is found by `green_boxes` in `PICK_CLAIM_BAND`; grey "Claimed" means
   nothing. The other two cards are orange arena-token buys, never clicked. Pickaxes pile up
   and one Claim takes them all, so it runs once per `[pickaxes] run_at` window (default 1, 13).
+
+- Daily missions (`features/daily_missions.py`, town > Battles > Campaign > "Daily missions"):
+  Dungeon has two Fight cards, Liberation a horizontal strip of ~10 Liberate cards (one locked
+  behind stars shows no button). A fight starts from its green button, runs ~10 s at the game's
+  x4 and ends with a rewards popup whose OK (`nav.wait_green` in `ARENA_OK_BAND`) returns to the
+  window. Fought cards read "cleared"/"liberated". The strip keeps its scroll position, so it
+  is dragged to the start (y 381, until the view stops changing) then forward one screen at a
+  time; a Liberate cut by the window edge is too narrow for `DM_FIGHT_MIN_W`. The Daily popup's
+  own "Open" buttons sit in `DM_FIGHT_BAND`, so `DM_WINDOW_X` is re-checked before every fight.
+  Once per `[daily_missions] run_at` window. Live 2026-11-11: 2 dungeons + 9 liberations, 108 s.
 
 ## Known gaps
 - Oracle "Claim" state and reward popup not yet seen live.

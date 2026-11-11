@@ -74,6 +74,18 @@ def require_screen(ctx: Ctx, p: Point, expect: Probe = atlas.DIALOG_CLOSE_X, via
     return ok
 
 
+def wait_green(ctx: Ctx, band: Rect, min_w: int, timeout_ms: int, poll_ms: int) -> Rect | None:
+    """First wide green button to appear in `band` within the timeout (a fight's result popup)."""
+    waited = 0
+    while waited <= timeout_ms:
+        boxes = vision.green_boxes(ctx.grab(band), (band[0], band[1]), min_w=min_w)
+        if boxes:
+            return boxes[0]
+        ctx.sleep(poll_ms)
+        waited += poll_ms
+    return None
+
+
 def find_dialog_x(ctx: Ctx, band: Rect, min_ring: int = 40) -> Point | None:
     """Centre of an orange-ring X (cream cross inside) within `band`, or None."""
     img = ctx.grab(band)

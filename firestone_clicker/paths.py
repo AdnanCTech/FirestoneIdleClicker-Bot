@@ -22,6 +22,7 @@ guardian = true
 oracle = true
 arena = true
 pickaxes = true
+daily_missions = true
 
 # Which alchemist experiments to start.
 [alchemist]
@@ -54,6 +55,10 @@ run_at = [1, 13]
 # Free pickaxes from the guild market's Supplies tab. They pile up and one Claim takes them all,
 # so a visit after each hour in run_at is enough.
 [pickaxes]
+run_at = [1, 13]
+
+# Daily missions (Campaign): both Dungeon fights and every Liberation card, once per window.
+[daily_missions]
 run_at = [1, 13]
 
 # Personal tree nodes to buy (only when features.ptree is true).

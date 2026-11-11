@@ -23,18 +23,6 @@ def fight_buttons(ctx: Ctx) -> list[Rect]:
     return vision.green_boxes(ctx.grab(band), (band[0], band[1]), min_w=atlas.ARENA_FIGHT_MIN_W)
 
 
-def _wait_ok(ctx: Ctx) -> Rect | None:
-    band = atlas.ARENA_OK_BAND
-    waited = 0
-    while waited <= atlas.ARENA_FIGHT_MAX_MS:
-        boxes = vision.green_boxes(ctx.grab(band), (band[0], band[1]), min_w=atlas.ARENA_FIGHT_MIN_W)
-        if boxes:
-            return boxes[0]
-        ctx.sleep(atlas.ARENA_POLL_MS)
-        waited += atlas.ARENA_POLL_MS
-    return None
-
-
 def _diag(ctx: Ctx, name: str) -> None:
     save = getattr(ctx, "save_png", None)
     if save is not None:
@@ -59,7 +47,7 @@ def _fight(ctx: Ctx, button: Rect) -> bool | None:
         return None
     if not nav.safe_click(ctx, atlas.ARENA_BATTLE, atlas.ARENA_BATTLE_RECT, 1000):
         return False
-    ok = _wait_ok(ctx)
+    ok = nav.wait_green(ctx, atlas.ARENA_OK_BAND, atlas.ARENA_FIGHT_MIN_W, atlas.ARENA_FIGHT_MAX_MS, atlas.ARENA_POLL_MS)
     if ok is None:
         ctx.log("arena: fight did not end")
         _diag(ctx, "arena_stuck")

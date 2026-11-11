@@ -333,3 +333,24 @@ PICK_SUPPLIES = Point(115, 752)
 PICK_SUPPLIES_OPEN = Probe(240, 741, 260, 761, 0x433018, 20, "pick_supplies_open")
 PICK_CLAIM_BAND = (540, 700, 890, 800)  # green Claim (590..838 x 721..776); grey once claimed
 PICK_CLAIM_MIN_W = 150
+
+# Daily missions (town > Battles > Campaign > "Daily missions"). Measured live 2026-11-11.
+# Both the Dungeon and the Liberation window share the X spot; the Daily popup's X is lower left.
+DM_CAMPAIGN = Point(773, 532)  # left card of the Battles popup
+DM_CAMPAIGN_OPEN = Probe(1700, 975, 1860, 1000, GREEN_BUTTON, 30, "dm_campaign_open")  # "Daily missions"
+DM_DAILY = Point(1783, 989)
+DM_DAILY_X = Probe(1470, 114, 1480, 124, DIALOG_X_CROSS, 30, "dm_daily_x")
+DM_DAILY_CLOSE = Point(1475, 119)
+DM_LIBERATION = Point(698, 799)  # the two "Open" buttons of the Daily missions popup
+DM_DUNGEON = Point(1220, 799)
+DM_WINDOW_X = Probe(1758, 90, 1768, 100, DIALOG_X_CROSS, 30, "dm_window_x")
+DM_WINDOW_CLOSE = Point(1763, 95)
+DM_FIGHT_BAND = (140, 740, 1795, 800)  # Fight/Liberate buttons, 260 px wide; "Requires x319" has none
+DM_FIGHT_MIN_W = 150
+DM_DUNGEON_FIGHTS = 2
+DM_STRIP_AREA = (140, 170, 1795, 860)
+DM_DRAG_Y = 381  # across the card pictures
+DM_DRAG_X = (1500, 500)
+DM_MAX_DRAGS = 8
+DM_MAX_FIGHTS = 15
+DM_VIEW_CHANGE = 0.02

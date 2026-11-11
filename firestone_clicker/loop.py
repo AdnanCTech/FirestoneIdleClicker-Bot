@@ -11,7 +11,7 @@ from pathlib import Path
 from firestone_clicker import nav, schedule
 from firestone_clicker.config import Config
 from firestone_clicker.ctx import Ctx, Stopped
-from firestone_clicker.features import alchemist, arena, guardian, guild, heroes, map_missions, oracle, pickaxes, research
+from firestone_clicker.features import alchemist, arena, daily_missions, guardian, guild, heroes, map_missions, oracle, pickaxes, research
 
 Feature = Callable[[Ctx, Config], None]
 FEATURES: list[tuple[str, Feature]] = [
@@ -24,12 +24,14 @@ FEATURES: list[tuple[str, Feature]] = [
     ("map_missions", map_missions.run),
     ("arena", arena.run),
     ("pickaxes", pickaxes.run),
+    ("daily_missions", daily_missions.run),
 ]
 GUILD_KEYS = ("expeditions", "awaken", "ptree")
 # Features that run once per window (hours from the config); the feature returns True when done.
 SCHEDULED: dict[str, Callable[[Config], list[int]]] = {
     "arena": lambda cfg: cfg.arena_run_at,
     "pickaxes": lambda cfg: cfg.pickaxes_run_at,
+    "daily_missions": lambda cfg: cfg.daily_missions_run_at,
 }
 MAX_HOME_FAILURES = 3
 
