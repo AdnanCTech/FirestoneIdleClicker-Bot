@@ -21,6 +21,7 @@ heroes = true
 guardian = true
 oracle = true
 arena = true
+pickaxes = true
 
 # Which alchemist experiments to start.
 [alchemist]
@@ -48,6 +49,11 @@ train_target = 1
 # day, so the arena is visited once after each hour in run_at (24h clock) and skipped otherwise.
 [arena]
 opponent = 3
+run_at = [1, 13]
+
+# Free pickaxes from the guild market's Supplies tab. They pile up and one Claim takes them all,
+# so a visit after each hour in run_at is enough.
+[pickaxes]
 run_at = [1, 13]
 
 # Personal tree nodes to buy (only when features.ptree is true).

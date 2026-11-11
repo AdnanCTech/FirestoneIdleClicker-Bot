@@ -15,6 +15,7 @@ FEATURE_KEYS = (
     "guardian",
     "oracle",
     "arena",
+    "pickaxes",
 )
 ALCHEMIST_KEYS = ("dragon_blood", "strange_dust", "exotic_coins")
 HERO_KEYS = ("h1", "h2", "h3", "h4", "h5", "guardian", "special")
@@ -40,6 +41,7 @@ class Config:
     ptree: dict[str, bool] = field(default_factory=lambda: _all_on(PTREE_KEYS))
     arena_opponent: int = 3
     arena_run_at: list[int] = field(default_factory=lambda: [1, 13])
+    pickaxes_run_at: list[int] = field(default_factory=lambda: [1, 13])
 
 
 def _merge(target: dict[str, bool], src: dict, section: str) -> None:
@@ -47,6 +49,13 @@ def _merge(target: dict[str, bool], src: dict, section: str) -> None:
         if k not in target:
             raise ValueError(f"unknown key [{section}] {k}")
         target[k] = bool(v)
+
+
+def _hours(data: dict, section: str, default: list[int]) -> list[int]:
+    hours = [int(h) for h in data.get(section, {}).get("run_at", default)]
+    if not hours or any(not 0 <= h <= 23 for h in hours):
+        raise ValueError(f"{section}.run_at must list hours 0 to 23")
+    return hours
 
 
 def load(path: Path) -> Config:
@@ -68,7 +77,6 @@ def load(path: Path) -> Config:
     cfg.arena_opponent = int(data.get("arena", {}).get("opponent", cfg.arena_opponent))
     if not 1 <= cfg.arena_opponent <= 3:
         raise ValueError("arena.opponent must be 1 to 3")
-    cfg.arena_run_at = [int(h) for h in data.get("arena", {}).get("run_at", cfg.arena_run_at)]
-    if not cfg.arena_run_at or any(not 0 <= h <= 23 for h in cfg.arena_run_at):
-        raise ValueError("arena.run_at must list hours 0 to 23")
+    cfg.arena_run_at = _hours(data, "arena", cfg.arena_run_at)
+    cfg.pickaxes_run_at = _hours(data, "pickaxes", cfg.pickaxes_run_at)
     return cfg

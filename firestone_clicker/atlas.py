@@ -324,3 +324,12 @@ ARENA_POLL_MS = 3000
 # Cream panel right of the "N/5" counter; at 0/5 a green "+" covers it (seen dimmed under the
 # token popup only, so the probe looks for the cream, not the green).
 ARENA_HAS_ATTEMPTS = Probe(1447, 147, 1457, 157, 0xDCC0A5, 20, "arena_has_attempts")
+
+# Free pickaxes (guild > Guild market > Supplies). Measured live 2026-11-11. The market opens
+# on a paid bundle tab, so Supplies is always clicked first; its tab turns dark brown.
+PICK_MARKET = Point(630, 365)
+PICK_MARKET_OPEN = Probe(160, 471, 180, 491, 0xBFB095, 20, "pick_market_open")  # left nav strip
+PICK_SUPPLIES = Point(115, 752)
+PICK_SUPPLIES_OPEN = Probe(240, 741, 260, 761, 0x433018, 20, "pick_supplies_open")
+PICK_CLAIM_BAND = (540, 700, 890, 800)  # green Claim (590..838 x 721..776); grey once claimed
+PICK_CLAIM_MIN_W = 150

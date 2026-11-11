@@ -28,7 +28,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (100 tests, ~6 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (104 tests, ~6 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -97,6 +97,13 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   game's x4 battle speed is remembered and not touched. A loss popup has not been seen yet.
   Visited once per `[arena] run_at` window (default 1 and 13 o'clock: attempts reset once a
   day around 9am, two windows give a second chance) via `schedule.py`.
+
+- Free pickaxes (`features/pickaxes.py`, guild > Guild market > Supplies): the market opens on
+  a paid real-money bundle tab, so Supplies is clicked first and probed (`PICK_SUPPLIES_OPEN`,
+  only meaningful after `PICK_MARKET_OPEN` passed: the dark brown also matches guild art). The
+  free card's green Claim is found by `green_boxes` in `PICK_CLAIM_BAND`; grey "Claimed" means
+  nothing. The other two cards are orange arena-token buys, never clicked. Pickaxes pile up
+  and one Claim takes them all, so it runs once per `[pickaxes] run_at` window (default 1, 13).
 
 ## Known gaps
 - Oracle "Claim" state and reward popup not yet seen live.
