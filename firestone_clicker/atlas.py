@@ -368,3 +368,17 @@ ENG_CARD = Point(600, 532)
 ENG_OPEN = Probe(1740, 346, 1760, 356, 0xE1CEAD, 20, "eng_open")  # beige of the effects panel
 ENG_CLAIM_BAND = (1520, 660, 1760, 755)
 ENG_CLAIM_MIN_W = 150
+
+# Market (main screen, right edge). Measured live 2026-11-12. Tab 1 opens by itself with the free
+# Mystery box (green Free at 551..796 x 850..901, grey "Claimed" + countdown after) next to a
+# $4.99 orange bundle; the last tab (calendar) has "Check In" in a lighter green gradient
+# (0x58A637..0x318A18) that GREEN_BUTTON does not match. Neither click opens a popup.
+MARKET_BUTTON = Point(1860, 601)
+MARKET_OPEN = Probe(290, 206, 310, 226, 0x7E82EC, 20, "market_open")  # lavender title band
+MARKET_FREE_BAND = (540, 840, 810, 910)
+MARKET_FREE_MIN_W = 150
+MARKET_CHECKIN_TAB = Point(1385, 126)
+MARKET_CHECKIN_OPEN = Probe(585, 571, 615, 591, 0xF2C65A, 25, "market_checkin_open")  # yellow page arrow
+MARKET_CHECKIN_BAND = (1240, 805, 1450, 865)
+MARKET_CHECKIN_BUTTON = 0x45981F
+MARKET_CHECKIN_MIN_W = 100
