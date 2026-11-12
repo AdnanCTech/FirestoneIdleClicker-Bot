@@ -43,8 +43,8 @@ def _kind(img, x: int, stand_top: int) -> str:
     """Mission kind from the disc colours above the stand; "other" when no key matches."""
     half, above, below = atlas.MAP_ICON_SAMPLE
     patch = img[max(0, stand_top - above) : max(0, stand_top - below), max(0, x - half) : x + half]
-    for kind, color, var, min_px in atlas.MAP_ICON_KINDS:
-        if patch.size and int(vision.match_mask(patch, color, var).sum()) >= min_px:
+    for kind, keys in atlas.MAP_ICON_KINDS:
+        if patch.size and all(int(vision.match_mask(patch, color, var).sum()) >= min_px for color, var, min_px in keys):
             return kind
     return "other"
 

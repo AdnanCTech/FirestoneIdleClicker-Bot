@@ -225,3 +225,31 @@ def test_real_shaped_stand_detected_whatever_the_cell_alignment():
         _pin(s, left, top)
         got = map_missions.available_icons(FakeCtx([s]))
         assert _near(got, [(left + 8, top - atlas.MAP_ICON_ABOVE_STAND)]), (left, top, got)
+
+
+def _titan(s, x, y):
+    # Volcano disc measured live 2026-11-12 at (1321,152): deep blue sky in the top rows of the
+    # sample window (0x005090, 93 px vs <=3 on every other icon) over lava orange (0xF08000,
+    # 93 px; the dragon has 106 of the same orange but no sky). It sits over the sea, so the
+    # wheel's cyan key also matches it (85 px) and the titan must be checked first.
+    paint(s, (x - 25, y - 25, x + 25, y + 25), 0x18B8F0)
+    paint(s, (x - 25, y - 40, x + 25, y - 10), 0x005090)
+    paint(s, (x - 25, y - 10, x + 25, y + 15), 0xF08000)
+    paint(s, (x - 9, y + 35, x + 9, y + 45), 0xE6DDB5)
+
+
+def test_titan_volcano_is_opened_before_every_other_kind():
+    s = _map()
+    _icon(s, 1200, 300, 0xF060F0)  # paw, highest on the map
+    _icon(s, 600, 500, 0xF05800)  # dragon: lava orange but no sky
+    _titan(s, 1320, 700)
+    got = map_missions.available_icons(FakeCtx([s]))
+    want = [(1320, 700), (1200, 300), (600, 500)]
+    assert len(got) == len(want) and all(abs(gx - wx) <= 4 and abs(gy - wy) <= 4 for (gx, gy), (wx, wy) in zip(got, want))
+
+
+def test_sky_blue_disc_without_lava_is_not_a_titan():
+    s = _map()
+    _icon(s, 800, 400, 0x005090)  # navy disc only
+    _icon(s, 1200, 400, 0xF060F0)  # paw
+    assert _near(map_missions.available_icons(FakeCtx([s])), [(1200, 400), (800, 400)])

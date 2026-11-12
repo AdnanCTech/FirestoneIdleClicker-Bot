@@ -258,14 +258,23 @@ MAP_ICON_STAND = (0xE6DDB5, 16, 8)
 MAP_ICON_STAND_SHAPE = (13, 50)
 MAP_ICON_ABOVE_STAND = 35
 # Game names per icon: scope = Scout, scroll = Adventure, sword = War, paw = Monster,
-# dragon = Dragon, wheel = Naval, volcano = Titan (locked until 5B gear power, never seen).
+# dragon = Dragon, wheel = Naval, volcano = Titan.
 # Icon kind from a 28x50 window above the stand (half width, from, to px above the stand top),
-# so the owner's preferred missions are opened first. (kind, colour, variation, min px),
-# checked in this order; measured live 2026-11-04 on four maps: paw magenta glow ~150 px vs 0
-# on every other icon, wheel cyan highlights 96 vs <=3, dragon deep orange 55+ vs <=2.
+# so the owner's preferred missions are opened first. (kind, ((colour, variation, min px), ...)):
+# every key of a kind must match, kinds checked in this order. Measured live 2026-11-04 on four
+# maps: paw magenta glow ~150 px vs 0 on every other icon, wheel cyan highlights 96 vs <=3,
+# dragon deep orange 55+ vs <=2. Titan (volcano, live 2026-11-12 on Fire Island top right):
+# deep blue sky in the disc's top rows 93 px vs <=3 elsewhere, plus lava orange 93 px (the
+# dragon has 106 of that orange but no sky). It sits over the sea, so the wheel's cyan key
+# also matches it (85 px) and the titan is checked first.
 MAP_ICON_SAMPLE = (14, 75, 25)
-MAP_ICON_KINDS = (("paw", 0xF060F0, 48, 40), ("wheel", 0x18B8F0, 24, 30), ("dragon", 0xF05800, 12, 25))
-MAP_PRIORITY = ("paw", "wheel", "dragon")
+MAP_ICON_KINDS = (
+    ("titan", ((0x005090, 24, 40), (0xF08000, 30, 50))),
+    ("paw", ((0xF060F0, 48, 40),)),
+    ("wheel", ((0x18B8F0, 24, 30),)),
+    ("dragon", ((0xF05800, 12, 25),)),
+)
+MAP_PRIORITY = ("titan", "paw", "wheel", "dragon")
 MAP_ICON_MERGE = 45
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with
