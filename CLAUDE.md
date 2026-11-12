@@ -30,7 +30,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (120 tests, ~8 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (124 tests, ~8 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -134,6 +134,12 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   by its yellow page arrow `MARKET_CHECKIN_OPEN`) has "Check In" in a lighter green gradient
   that `GREEN_BUTTON` misses, so it is matched with `MARKET_CHECKIN_BUTTON`. Neither click opens
   a popup. The Market X is `BIG_CLOSE`. Once per `[market] run_at` window (default 1, 13).
+
+- Oracle's gift (`features/oracle_gift.py`, town > Oracle > Market tab): same layout as the
+  main Market, green Free in `ORACLE_GIFT_BAND` beside a $4.99 bundle, no popup. The tab is
+  confirmed by its navy side panel (`ORACLE_MARKET_OPEN`); the market's X returns to the
+  Oracle, so the feature closes twice (market, Oracle) and leaves town to `go_home`. Once per
+  `[oracle_gift] run_at` window (default 1, 13).
 
 ## Known gaps
 - Oracle "Claim" state and reward popup not yet seen live.

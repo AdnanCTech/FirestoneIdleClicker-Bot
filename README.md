@@ -23,6 +23,7 @@ A few things only need doing a couple of times a day. They run at the hours set 
 - Daily missions: clears both Dungeon fights and every Liberation card.
 - Campaign loot and Engineer: claim their chests when the 6 hour timers are up.
 - Market: claims the free Mystery box and presses the daily Check In.
+- Oracle's gift: claims the free card on the Oracle's Market tab.
 
 Then it pauses (60 seconds by default) and goes again.
 
@@ -69,7 +70,7 @@ library used for the Win+Esc stop key. If that worries you, the source is right 
   the main-screen markers are visible. Run it on the main screen with no dialog open.
 - `FirestoneClicker.exe --once heroes` runs a single feature and exits. Feature names:
   `heroes`, `guild`, `guardian`, `alchemist`, `oracle`, `research`, `map_missions`, `arena`,
-  `pickaxes`, `daily_missions`, `campaign_loot`, `engineer`, `market`. `--once` ignores `run_at`.
+  `pickaxes`, `daily_missions`, `campaign_loot`, `engineer`, `market`, `oracle_gift`. `--once` ignores `run_at`.
 - `FirestoneClicker.exe --dry-run` runs one cycle without clicking anything.
 - When a feature fails the bot saves a screenshot in `diag/` and carries on. If it cannot get
   back to the main screen three cycles in a row it stops.

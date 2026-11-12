@@ -382,3 +382,11 @@ MARKET_CHECKIN_OPEN = Probe(585, 571, 615, 591, 0xF2C65A, 25, "market_checkin_op
 MARKET_CHECKIN_BAND = (1240, 805, 1450, 865)
 MARKET_CHECKIN_BUTTON = 0x45981F
 MARKET_CHECKIN_MIN_W = 100
+
+# Oracle's gift (town > Oracle > Market tab). Measured live 2026-11-12. Same layout as the main
+# Market: green Free at 571..817 x 771..821 beside a $4.99 orange bundle, grey "Claimed" +
+# countdown after, no popup. The X of the market returns to the Oracle screen.
+ORACLE_MARKET_TAB = Point(828, 771)
+ORACLE_MARKET_OPEN = Probe(160, 201, 180, 221, 0x23354A, 20, "oracle_market_open")  # navy side panel
+ORACLE_GIFT_BAND = (560, 771, 830, 826)
+ORACLE_GIFT_MIN_W = 150

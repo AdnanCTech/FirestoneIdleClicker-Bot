@@ -26,6 +26,7 @@ daily_missions = true
 campaign_loot = true
 engineer = true
 market = true
+oracle_gift = true
 
 # Which alchemist experiments to start.
 [alchemist]
@@ -75,6 +76,10 @@ run_at = [1, 7, 13, 19]
 
 # Market: free Mystery box on the first tab and the daily Check In on the calendar tab.
 [market]
+run_at = [1, 13]
+
+# Oracle's gift: the free card on the Oracle's Market tab.
+[oracle_gift]
 run_at = [1, 13]
 
 # Personal tree nodes to buy (only when features.ptree is true).
