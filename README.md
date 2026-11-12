@@ -13,7 +13,8 @@ map, and never reads game memory or talks to the network.
 - Alchemist: collects finished experiments, completes free speed-ups, starts new ones.
 - Oracle: claims and starts rituals.
 - Research: claims finished research and starts any available one in view.
-- Map: claims finished missions and starts new ones while squads are idle.
+- Map: claims finished missions and starts new ones while squads are idle, panning across
+  the whole world when the one to start is off screen. Titan missions go first.
 
 A few things only need doing a couple of times a day. They run at the hours set in their
 `run_at` list and are remembered in `state.json`, so a restart does not repeat them:

@@ -7,6 +7,10 @@ popup (orange "Speed up" with a gem price) or one short of squads is just closed
 
 from __future__ import annotations
 
+import time
+
+import numpy as np
+
 from firestone_clicker import atlas, nav, vision
 from firestone_clicker.atlas import Point
 from firestone_clicker.config import Config
@@ -103,7 +107,7 @@ def _collect(ctx: Ctx) -> None:
     ctx.log(f"map: {claimed} claimed" if claimed else "map: nothing to claim")
 
 
-def _start_pass(ctx: Ctx) -> None:
+def _start_pass(ctx: Ctx) -> int:
     icons = available_icons(ctx)
     ctx.log(f"map: {len(icons)} icon(s) found")
     started = closed = 0
@@ -120,6 +124,59 @@ def _start_pass(ctx: Ctx) -> None:
             closed += 1
     ctx.log(f"map: {started} started, {closed} popups closed (in progress or not startable)")
     ctx.move(atlas.MAP_POPUP_OUTSIDE.x, atlas.MAP_POPUP_OUTSIDE.y)
+    return started
+
+
+def _changed(before: np.ndarray, after: np.ndarray) -> bool:
+    diff = np.abs(before[:, :, :3].astype(np.int16) - after[:, :, :3].astype(np.int16)).max(axis=2) > 40
+    return float(diff.mean()) > atlas.MAP_VIEW_CHANGE
+
+
+def _pan(ctx: Ctx, direction: str, icons: list[tuple[int, int]]) -> bool:
+    """Drag the map one screen to reveal what lies in `direction`; False at the edge."""
+    dx, dy = atlas.MAP_PAN[direction]
+    clear = atlas.MAP_PAN_CLEAR
+    starts = atlas.MAP_PAN_STARTS[direction]
+    x, y = next((p for p in starts if all(abs(p[0] - ix) > clear or abs(p[1] - iy) > clear for ix, iy in icons)), starts[0])
+    before = ctx.grab(atlas.MAP_ICON_AREA)
+    ctx.drag(x, y, x + dx, y + dy)
+    ctx.move(atlas.MAP_POPUP_OUTSIDE.x, atlas.MAP_POPUP_OUTSIDE.y)
+    ctx.sleep(700)  # the pan glides to a stop
+    return _changed(before, ctx.grab(atlas.MAP_ICON_AREA))
+
+
+def _pan_to_edge(ctx: Ctx, direction: str) -> None:
+    for _ in range(atlas.MAP_PAN_MAX):
+        if not _pan(ctx, direction, available_icons(ctx)):
+            return
+
+
+_next_sweep = 0.0  # monotonic time before which a sweep is pointless (the last one found nothing)
+
+
+def _sweep(ctx: Ctx) -> None:
+    """Walk the whole map from its top-left corner, one screen at a time, starting what it finds."""
+    global _next_sweep
+    if time.monotonic() < _next_sweep:
+        ctx.log("map: sweep skipped, last one found nothing")
+        return
+    ctx.log("map: squads still idle, sweeping the map")
+    _pan_to_edge(ctx, "up")
+    _pan_to_edge(ctx, "left")
+    started = 0
+    for _ in range(atlas.MAP_PAN_MAX + 1):
+        for _ in range(atlas.MAP_PAN_MAX + 1):
+            started += _start_pass(ctx)
+            if not nav.found(ctx, atlas.MAP_IDLE_BANNER):
+                return
+            if not _pan(ctx, "right", available_icons(ctx)):
+                break
+        if not _pan(ctx, "down", available_icons(ctx)):
+            break
+        _pan_to_edge(ctx, "left")
+    if not started:
+        ctx.log("map: sweep found nothing")
+        _next_sweep = time.monotonic() + atlas.MAP_SWEEP_COOLDOWN_S
 
 
 def run(ctx: Ctx, cfg: Config) -> None:
@@ -133,6 +190,8 @@ def run(ctx: Ctx, cfg: Config) -> None:
     _collect(ctx)
     if nav.found(ctx, atlas.MAP_IDLE_BANNER):
         _start_pass(ctx)
+        if nav.found(ctx, atlas.MAP_IDLE_BANNER):
+            _sweep(ctx)
     else:
         ctx.log("map: no idle squads, start pass skipped")
     nav.go_home(ctx)

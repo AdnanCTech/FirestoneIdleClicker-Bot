@@ -276,6 +276,25 @@ MAP_ICON_KINDS = (
 )
 MAP_PRIORITY = ("titan", "paw", "wheel", "dragon")
 MAP_ICON_MERGE = 45
+# Panning (live 2026-11-12): the world is about three screens tall (Doomfire Island above the
+# continent, Trinity Islands below) and wider than one screen; a 900 px horizontal drag slid the
+# continent 700 px. The view keeps its position between opens and clamps at the edges, where a
+# drag leaves the capture unchanged (0.000 of the icon area; a real pan over sea gave 0.08+).
+# The idle banner shows only while a mission with enough free squads exists somewhere, so a
+# banner that outlives the visible pass means one is off screen and the map is swept from the
+# top-left corner. Drags start on a candidate point at least MAP_PAN_CLEAR px from every icon
+# (a press on an icon could open its popup); a pointer release elsewhere clicks nothing.
+MAP_PAN = {"up": (0, 600), "down": (0, -600), "left": (1000, 0), "right": (-1000, 0)}  # drag vector
+MAP_PAN_STARTS = {
+    "up": tuple((x, 250) for x in (380, 700, 1000, 1300, 1600)),
+    "down": tuple((x, 850) for x in (380, 700, 1000, 1300, 1600)),
+    "left": tuple((380, y) for y in (550, 250, 850)),
+    "right": tuple((1600, y) for y in (550, 250, 850)),
+}
+MAP_PAN_CLEAR = 80
+MAP_PAN_MAX = 4  # drags per direction before the edge is assumed
+MAP_VIEW_CHANGE = 0.03  # share of icon-area pixels that must change for a drag to count as a pan
+MAP_SWEEP_COOLDOWN_S = 1800  # after a sweep that started nothing (a mission the bot cannot start)
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with
 # one button: grey "Claimed", green "Start" (free), green "Claim", or a timer while running.
