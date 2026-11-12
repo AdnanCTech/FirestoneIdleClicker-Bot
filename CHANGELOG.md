@@ -3,6 +3,17 @@
 The section for a version becomes the GitHub release notes. Write it for players, not for
 developers: what the bot now does differently, what was fixed, what to change in settings.
 
+## 0.1.4 - 2026-11-12
+
+**New**
+- Market: opens the Market on the main screen, claims the free Mystery box on the
+  first tab and presses the daily Check In on the calendar tab.
+- Oracle's gift: opens the Oracle's Market tab in town and claims its free box.
+- Both run twice a day by default (`[market]` and `[oracle_gift]` `run_at = [1, 13]`)
+  and are remembered in `state.json` like the other daily features. Add the two
+  sections to your settings.toml only if you want different hours; the defaults
+  apply when they are missing.
+
 ## 0.1.3 - 2026-11-11
 
 **New**
