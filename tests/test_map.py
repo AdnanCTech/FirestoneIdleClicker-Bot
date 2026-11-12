@@ -277,7 +277,10 @@ def test_sweep_pans_the_map_when_the_banner_outlives_the_visible_pass(monkeypatc
     # edge), pan right -> hidden icon, icon -> start popup, start -> map without banner.
     c = FakeCtx([empty, empty.copy(), empty.copy(), hidden, _start_popup(hidden), _map()] + [_map()] * 5)
     map_missions.run(c, Config())
-    assert len(c.drags) == 3 and _clicked_near(c.clicks, 1105, 501) and _in_band(c.clicks, 958, 830, 1208, 900)
+    assert _clicked_near(c.clicks, 1105, 501) and _in_band(c.clicks, 958, 830, 1208, 900)
+    assert len(c.drags) == 3 + 4  # sweep, then home: top edge, left edge, fixed left, fixed up
+    hx, hy = atlas.MAP_HOME_DRAG
+    assert c.drags[-2][2] - c.drags[-2][0] == -hx and c.drags[-1][3] - c.drags[-1][1] == -hy
     assert c.drags[0][3] > c.drags[0][1]  # first drag pulls the map down to reveal what is above
     assert c.drags[2][2] < c.drags[2][0]  # third drag pulls the map left to reveal what is right
 
@@ -288,7 +291,7 @@ def test_fruitless_sweep_is_bounded_and_not_repeated_for_a_while(monkeypatch):
     c = FakeCtx([empty.copy() for _ in range(12)])
     map_missions.run(c, Config())
     # top edge, left edge, right edge, bottom edge: four drags that change nothing end the sweep
-    assert len(c.drags) == 4 and all(p == (atlas.BIG_CLOSE.x, atlas.BIG_CLOSE.y) for p in c.clicks)
+    assert len(c.drags) == 4 + 4 and all(p == (atlas.BIG_CLOSE.x, atlas.BIG_CLOSE.y) for p in c.clicks)
     assert "map: sweep found nothing" in c.logs
     c2 = FakeCtx([empty.copy() for _ in range(4)])
     map_missions.run(c2, Config())

@@ -294,6 +294,10 @@ MAP_PAN_STARTS = {
 MAP_PAN_CLEAR = 80
 MAP_PAN_MAX = 4  # drags per direction before the edge is assumed
 MAP_VIEW_CHANGE = 0.03  # share of icon-area pixels that must change for a drag to count as a pan
+# After a sweep the view is put back where the game opened it (the continent with Doomfire
+# Island at the top): top-left corner, then the map dragged left and up by this much (live
+# 2026-11-12: Dark Cavern landmark 712 right and 652 below its default spot in the corner view).
+MAP_HOME_DRAG = (710, 650)
 MAP_SWEEP_COOLDOWN_S = 1800  # after a sweep that started nothing (a mission the bot cannot start)
 
 # Oracle rituals (via town). Measured live 2026-11-04: four cards in a 2x2 grid, each with

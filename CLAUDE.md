@@ -79,8 +79,10 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   pass the map is swept (`_sweep`): drag to the top-left corner, then screen by screen right
   and down (`MAP_PAN`, a drag that changes under 3 % of the icon area is an edge, 4 drags per
   direction at most), starting whatever each view shows until the banner goes. The world is
-  ~3 screens tall and wider than one; the view keeps its position between opens, so the fast
-  pass scans wherever the last sweep stopped. Drags start on a point clear of every icon. A
+  ~3 screens tall and wider than one; the view keeps its position between opens, so every
+  sweep ends with `_home_view`: top-left corner, then `MAP_HOME_DRAG` left and up, which put
+  the default continent view back to the pixel (live 2026-11-12, Dark Cavern landmark). Drags
+  start on a point clear of every icon. A
   sweep that starts nothing (a mission the bot cannot start) blocks sweeps for 30 min. "N/27"
   at the top is idle squads; the bot cannot read "Required squads", so a mission short of
   squads is just closed.

@@ -132,9 +132,9 @@ def _changed(before: np.ndarray, after: np.ndarray) -> bool:
     return float(diff.mean()) > atlas.MAP_VIEW_CHANGE
 
 
-def _pan(ctx: Ctx, direction: str, icons: list[tuple[int, int]]) -> bool:
-    """Drag the map one screen to reveal what lies in `direction`; False at the edge."""
-    dx, dy = atlas.MAP_PAN[direction]
+def _pan(ctx: Ctx, direction: str, icons: list[tuple[int, int]], vector: tuple[int, int] | None = None) -> bool:
+    """Drag the map one screen (or `vector`) to reveal what lies in `direction`; False at the edge."""
+    dx, dy = vector or atlas.MAP_PAN[direction]
     clear = atlas.MAP_PAN_CLEAR
     starts = atlas.MAP_PAN_STARTS[direction]
     x, y = next((p for p in starts if all(abs(p[0] - ix) > clear or abs(p[1] - iy) > clear for ix, iy in icons)), starts[0])
@@ -151,16 +151,20 @@ def _pan_to_edge(ctx: Ctx, direction: str) -> None:
             return
 
 
+def _home_view(ctx: Ctx) -> None:
+    """Put the view back on the continent: top-left corner, then a fixed drag left and up."""
+    _pan_to_edge(ctx, "up")
+    _pan_to_edge(ctx, "left")
+    dx, dy = atlas.MAP_HOME_DRAG
+    _pan(ctx, "right", available_icons(ctx), (-dx, 0))
+    _pan(ctx, "down", available_icons(ctx), (0, -dy))
+
+
 _next_sweep = 0.0  # monotonic time before which a sweep is pointless (the last one found nothing)
 
 
-def _sweep(ctx: Ctx) -> None:
+def _sweep_views(ctx: Ctx) -> int:
     """Walk the whole map from its top-left corner, one screen at a time, starting what it finds."""
-    global _next_sweep
-    if time.monotonic() < _next_sweep:
-        ctx.log("map: sweep skipped, last one found nothing")
-        return
-    ctx.log("map: squads still idle, sweeping the map")
     _pan_to_edge(ctx, "up")
     _pan_to_edge(ctx, "left")
     started = 0
@@ -168,12 +172,23 @@ def _sweep(ctx: Ctx) -> None:
         for _ in range(atlas.MAP_PAN_MAX + 1):
             started += _start_pass(ctx)
             if not nav.found(ctx, atlas.MAP_IDLE_BANNER):
-                return
+                return started
             if not _pan(ctx, "right", available_icons(ctx)):
                 break
         if not _pan(ctx, "down", available_icons(ctx)):
             break
         _pan_to_edge(ctx, "left")
+    return started
+
+
+def _sweep(ctx: Ctx) -> None:
+    global _next_sweep
+    if time.monotonic() < _next_sweep:
+        ctx.log("map: sweep skipped, last one found nothing")
+        return
+    ctx.log("map: squads still idle, sweeping the map")
+    started = _sweep_views(ctx)
+    _home_view(ctx)
     if not started:
         ctx.log("map: sweep found nothing")
         _next_sweep = time.monotonic() + atlas.MAP_SWEEP_COOLDOWN_S
