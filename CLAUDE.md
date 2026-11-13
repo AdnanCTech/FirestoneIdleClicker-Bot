@@ -30,7 +30,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (129 tests, ~8 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (130 tests, ~8 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -74,7 +74,9 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   opened first in that order (`MAP_PRIORITY`, kind from disc colours above the stand; a kind
   may need several colours: the Titan is its deep blue sky plus lava, since the dragon shares
   the lava and the sea around Fire Island matches the wheel's cyan). Seen in progress on
-  2026-11-12; Shadow missions are not unlocked. Gated by the idle banner, which the game shows
+  2026-11-12; Shadow missions are not unlocked. Gated by the idle banner (`idle_banner`: at
+  least `MAP_IDLE_BANNER_MIN_PX` brown text pixels in its band; a lone speck made the probe
+  fire every cycle with no banner on 2026-11-12), which the game shows
   only while a mission with enough free squads exists somewhere; if it outlives the visible
   pass the map is swept (`_sweep`): drag to the top-left corner, then screen by screen right
   and down (`MAP_PAN`, a drag that changes under 3 % of the icon area is an edge, 4 drags per

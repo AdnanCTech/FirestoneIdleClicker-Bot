@@ -236,6 +236,9 @@ MAP_MAX_STARTS = 15
 # (the countdown is how long they stay on offer). The reference bot's fixed spot list did not
 # line up.
 MAP_IDLE_BANNER = Probe(600, 992, 1100, 1008, IDLE_TROOP, 10, "map_idle_banner")
+# The banner's brown text fills ~2800 px of that band; the map without it still has a few brown
+# specks (6 on 2026-11-12), which `nav.found` (any pixel) took for the banner every cycle.
+MAP_IDLE_BANNER_MIN_PX = 1000
 MAP_ICON_AREA = (300, 100, 1770, 975)  # Celenis dragon stand at x 1716; side buttons from 1775
 # The idle banner is a cream gradient whose lower rows match the stand colour, and it moves
 # (top at y 944 on 2026-11-06, 971 the day before). Its top is found on the column below

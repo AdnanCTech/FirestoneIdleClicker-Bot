@@ -306,3 +306,16 @@ def test_pan_starts_away_from_icons():
     assert map_missions._pan(c, "up", [(x, y)]) is False
     sx, sy = c.drags[0][:2]
     assert abs(sx - x) > atlas.MAP_PAN_CLEAR or abs(sy - y) > atlas.MAP_PAN_CLEAR
+
+
+def test_a_few_brown_specks_in_the_banner_band_are_not_the_idle_banner():
+    # Live 2026-11-12: the default map view with no banner had 6 brown pixels in the probe band
+    # (2834 with the banner showing) and the bot opened all 13 popups every cycle.
+    s = _map()
+    _icon(s, 1105, 501)
+    x1, y1 = atlas.MAP_IDLE_BANNER.rect[:2]
+    paint(s, (x1 + 200, y1 + 5, x1 + 202, y1 + 7), 0x542710)
+    c = FakeCtx([s] * 5)
+    map_missions.run(c, Config())
+    assert not _clicked_near(c.clicks, 1105, 501)
+    assert "map: no idle squads, start pass skipped" in c.logs

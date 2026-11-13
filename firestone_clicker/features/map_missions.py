@@ -53,6 +53,12 @@ def _kind(img, x: int, stand_top: int) -> str:
     return "other"
 
 
+def idle_banner(ctx: Ctx) -> bool:
+    """The "Your squads are idling" banner is showing (enough brown text pixels in its band)."""
+    p = atlas.MAP_IDLE_BANNER
+    return int(vision.match_mask(ctx.grab(p.rect), p.color, p.var).sum()) >= atlas.MAP_IDLE_BANNER_MIN_PX
+
+
 def _banner_rows(img, area: Rect) -> int:
     """How many rows at the bottom of the capture the idle banner covers (0 when it is lower)."""
     x = atlas.MAP_BANNER_COLUMN - area[0]
@@ -114,7 +120,7 @@ def _start_pass(ctx: Ctx) -> int:
     for x, y in icons:
         if started >= atlas.MAP_MAX_STARTS:
             break
-        if not nav.found(ctx, atlas.MAP_IDLE_BANNER):
+        if not idle_banner(ctx):
             ctx.log("map: no more idle squads")
             break
         nav.click(ctx, Point(x, y), 1200)
@@ -171,7 +177,7 @@ def _sweep_views(ctx: Ctx) -> int:
     for _ in range(atlas.MAP_PAN_MAX + 1):
         for _ in range(atlas.MAP_PAN_MAX + 1):
             started += _start_pass(ctx)
-            if not nav.found(ctx, atlas.MAP_IDLE_BANNER):
+            if not idle_banner(ctx):
                 return started
             if not _pan(ctx, "right", available_icons(ctx)):
                 break
@@ -203,9 +209,9 @@ def run(ctx: Ctx, cfg: Config) -> None:
     ctx.move(atlas.MAP_POPUP_OUTSIDE.x, atlas.MAP_POPUP_OUTSIDE.y)
     _free_refresh(ctx)
     _collect(ctx)
-    if nav.found(ctx, atlas.MAP_IDLE_BANNER):
+    if idle_banner(ctx):
         _start_pass(ctx)
-        if nav.found(ctx, atlas.MAP_IDLE_BANNER):
+        if idle_banner(ctx):
             _sweep(ctx)
     else:
         ctx.log("map: no idle squads, start pass skipped")
