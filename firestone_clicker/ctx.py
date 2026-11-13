@@ -180,6 +180,7 @@ class FakeCtx(Ctx):
         self.key_holds: list[tuple[str, int]] = []
         self.sleeps: list[float] = []
         self.logs: list[str] = []
+        self.saved: list[str] = []
 
     def grab(self, rect: Rect) -> np.ndarray:
         x1, y1, x2, y2 = rect
@@ -209,6 +210,9 @@ class FakeCtx(Ctx):
 
     def log(self, msg: str) -> None:
         self.logs.append(msg)
+
+    def save_png(self, path: str) -> None:
+        self.saved.append(path)
 
 
 def install_hotkey(stop: threading.Event) -> None:

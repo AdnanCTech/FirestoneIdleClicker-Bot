@@ -113,6 +113,15 @@ def _collect(ctx: Ctx) -> None:
     ctx.log(f"map: {claimed} claimed" if claimed else "map: nothing to claim")
 
 
+def _dismiss_dialog(ctx: Ctx) -> bool:
+    """Close a popup still open over the map by its X; True when one was closed."""
+    x = nav.find_dialog_x(ctx, atlas.MAP_POPUP_X_BAND)
+    if x is None:
+        return False
+    nav.click(ctx, x, 800)
+    return True
+
+
 def _start_pass(ctx: Ctx) -> int:
     icons = available_icons(ctx)
     ctx.log(f"map: {len(icons)} icon(s) found")
@@ -120,8 +129,12 @@ def _start_pass(ctx: Ctx) -> int:
     for x, y in icons:
         if started >= atlas.MAP_MAX_STARTS:
             break
-        if not idle_banner(ctx):
+        # A dialog left open (seen overnight 2026-11-12: a "start" that opened one) hides the
+        # banner and would also swallow every drag of the sweep and home restore.
+        if not idle_banner(ctx) and not (_dismiss_dialog(ctx) and idle_banner(ctx)):
             ctx.log("map: no more idle squads")
+            if not started:
+                nav.capture(ctx, "map_banner_gone")  # nothing used a squad, so what hid it?
             break
         nav.click(ctx, Point(x, y), 1200)
         if _press_green_or_close(ctx, f"started mission at {x},{y}"):
@@ -157,10 +170,18 @@ def _pan_to_edge(ctx: Ctx, direction: str) -> None:
             return
 
 
+def _corner(ctx: Ctx) -> None:
+    """Drag to the top-left corner: MAP_PAN_MAX drags each way, the edges clamp the extra ones.
+    Not by change detection: a pan over open sea changes little and would pass for an edge."""
+    _dismiss_dialog(ctx)
+    for direction in ("up", "left"):
+        for _ in range(atlas.MAP_PAN_MAX):
+            _pan(ctx, direction, available_icons(ctx))
+
+
 def _home_view(ctx: Ctx) -> None:
     """Put the view back on the continent: top-left corner, then a fixed drag left and up."""
-    _pan_to_edge(ctx, "up")
-    _pan_to_edge(ctx, "left")
+    _corner(ctx)
     dx, dy = atlas.MAP_HOME_DRAG
     _pan(ctx, "right", available_icons(ctx), (-dx, 0))
     _pan(ctx, "down", available_icons(ctx), (0, -dy))
@@ -171,8 +192,7 @@ _next_sweep = 0.0  # monotonic time before which a sweep is pointless (the last 
 
 def _sweep_views(ctx: Ctx) -> int:
     """Walk the whole map from its top-left corner, one screen at a time, starting what it finds."""
-    _pan_to_edge(ctx, "up")
-    _pan_to_edge(ctx, "left")
+    _corner(ctx)
     started = 0
     for _ in range(atlas.MAP_PAN_MAX + 1):
         for _ in range(atlas.MAP_PAN_MAX + 1):

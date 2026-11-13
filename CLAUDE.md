@@ -30,7 +30,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (130 tests, ~8 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (132 tests, ~12 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -83,9 +83,15 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   direction at most), starting whatever each view shows until the banner goes. The world is
   ~3 screens tall and wider than one; the view keeps its position between opens, so every
   sweep ends with `_home_view`: top-left corner, then `MAP_HOME_DRAG` left and up, which put
-  the default continent view back to the pixel (live 2026-11-12, Dark Cavern landmark). Drags
-  start on a point clear of every icon. A
-  sweep that starts nothing (a mission the bot cannot start) blocks sweeps for 30 min. "N/27"
+  the default continent view back to the pixel (live 2026-11-12 and 2026-11-13, Dark Cavern
+  landmark). The corner (`_corner`) is always `MAP_PAN_MAX` drags up and left, never change
+  detection: a pan over open sea changes under 7 % and would pass for an edge. Drags start on a
+  point clear of every icon. A sweep that starts nothing (a mission the bot cannot start)
+  blocks sweeps for 30 min. Overnight 2026-11-12 a "start" left a dialog open (identity
+  unknown, no capture): it hid the banner, swallowed every drag of the home restore and left
+  the view off the continent until morning, so when the banner is missing mid-pass the bot
+  first closes any X in `MAP_POPUP_X_BAND` (`_dismiss_dialog`, also before the corner drags)
+  and, if nothing was started in that pass, saves `diag/map_banner_gone.png` to show what hid it. "N/27"
   at the top is idle squads; the bot cannot read "Required squads", so a mission short of
   squads is just closed.
 - Personal tree: an out-of-tokens popup puts a green "Get more" under the buy point; it is

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 
 from firestone_clicker import atlas, vision
@@ -106,6 +108,18 @@ def thumbnail(img: np.ndarray) -> np.ndarray:
 
 def changed(a: np.ndarray, b: np.ndarray) -> bool:
     return bool((np.abs(a - b) >= STALL_DIFF).mean() >= STALL_CELLS)
+
+
+def capture(ctx: Ctx, name: str) -> None:
+    """Save the screen as diag/<name>.png when the context can (a failed capture only logs)."""
+    save = getattr(ctx, "save_png", None)
+    if save is None:
+        return
+    Path("diag").mkdir(exist_ok=True)
+    try:
+        save(f"diag/{name}.png")
+    except Exception as e:  # a failed diagnostic must not mask the feature's error
+        ctx.log(f"diag capture failed: {e}")
 
 
 def go_home(ctx: Ctx) -> bool:

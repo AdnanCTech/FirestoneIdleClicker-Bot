@@ -66,14 +66,7 @@ def enabled(name: str, cfg: Config) -> bool:
 
 
 def _diag(ctx: Ctx, name: str) -> None:
-    save = getattr(ctx, "save_png", None)
-    if save is None:
-        return
-    Path("diag").mkdir(exist_ok=True)
-    try:
-        save(f"diag/{name}-{time.strftime('%Y%m%d-%H%M%S')}.png")
-    except Exception as e:  # a failed diagnostic must not mask the feature's error
-        ctx.log(f"diag capture failed: {e}")
+    nav.capture(ctx, f"{name}-{time.strftime('%Y%m%d-%H%M%S')}")
 
 
 def run_cycle(
