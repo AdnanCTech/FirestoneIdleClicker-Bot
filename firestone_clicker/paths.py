@@ -65,14 +65,14 @@ run_at = [1, 13]
 [daily_missions]
 run_at = [1, 13]
 
-# Campaign "Next loot" chest: fills every 6 hours and does not stack. In each window the bot
-# keeps checking every cycle until the Claim is green and pressed.
+# Campaign "Next loot" chest: fills every 6 hours from the claim and does not stack. The bot
+# waits every_h hours after its last claim, then checks every cycle until the Claim is green.
 [campaign_loot]
-run_at = [1, 7, 13, 19]
+every_h = 6
 
-# Engineer "Tools production" Claim: also every 6 hours, same retry rule as campaign_loot.
+# Engineer "Tools production" Claim: also 6 hours from the claim, same rule as campaign_loot.
 [engineer]
-run_at = [1, 7, 13, 19]
+every_h = 6
 
 # Market: free Mystery box on the first tab and the daily Check In on the calendar tab.
 [market]

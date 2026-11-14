@@ -17,7 +17,8 @@ map, and never reads game memory or talks to the network.
   the whole world when the one to start is off screen. Titan missions go first.
 
 A few things only need doing a couple of times a day. They run at the hours set in their
-`run_at` list and are remembered in `state.json`, so a restart does not repeat them:
+`run_at` list (Campaign loot and Engineer instead wait `every_h` hours after their last claim)
+and are remembered in `state.json`, so a restart does not repeat them:
 
 - Arena of Kings: fights the opponent position you choose until the day's attempts are used.
 - Free pickaxes: claims them from the guild market's Supplies tab.
@@ -71,7 +72,7 @@ library used for the Win+Esc stop key. If that worries you, the source is right 
   the main-screen markers are visible. Run it on the main screen with no dialog open.
 - `FirestoneClicker.exe --once heroes` runs a single feature and exits. Feature names:
   `heroes`, `guild`, `guardian`, `alchemist`, `oracle`, `research`, `map_missions`, `arena`,
-  `pickaxes`, `daily_missions`, `campaign_loot`, `engineer`, `market`, `oracle_gift`. `--once` ignores `run_at`.
+  `pickaxes`, `daily_missions`, `campaign_loot`, `engineer`, `market`, `oracle_gift`. `--once` ignores `run_at` and `every_h`.
 - `FirestoneClicker.exe --dry-run` runs one cycle without clicking anything.
 - When a feature fails the bot saves a screenshot in `diag/` and carries on. If it cannot get
   back to the main screen three cycles in a row it stops.

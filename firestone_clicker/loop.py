@@ -51,10 +51,13 @@ SCHEDULED: dict[str, Callable[[Config], list[int]]] = {
     "arena": lambda cfg: cfg.arena_run_at,
     "pickaxes": lambda cfg: cfg.pickaxes_run_at,
     "daily_missions": lambda cfg: cfg.daily_missions_run_at,
-    "campaign_loot": lambda cfg: cfg.campaign_loot_run_at,
-    "engineer": lambda cfg: cfg.engineer_run_at,
     "market": lambda cfg: cfg.market_run_at,
     "oracle_gift": lambda cfg: cfg.oracle_gift_run_at,
+}
+# Features whose cooldown starts at the claim: run when every_h hours passed since the last True.
+INTERVAL: dict[str, Callable[[Config], int]] = {
+    "campaign_loot": lambda cfg: cfg.campaign_loot_every_h,
+    "engineer": lambda cfg: cfg.engineer_every_h,
 }
 MAX_HOME_FAILURES = 3
 
@@ -82,14 +85,21 @@ def run_cycle(
             continue
         if only is None and not enabled(name, cfg):
             continue
-        win = schedule.window(SCHEDULED[name](cfg), now()) if name in SCHEDULED and only is None else None
-        if win is not None and state is not None and state.done(name, win):
-            continue
+        mark: str | None = None  # what to store in state when the feature reports done
+        if only is None and state is not None and name in SCHEDULED:
+            mark = schedule.window(SCHEDULED[name](cfg), now())
+            if state.done(name, mark):
+                continue
+        elif only is None and state is not None and name in INTERVAL:
+            t = now()
+            if not schedule.due(state.last(name), INTERVAL[name](cfg), t):
+                continue
+            mark = t.isoformat(timespec="seconds")
         ctx.log(f"--- {name}")
         t0 = time.monotonic()
         try:
-            if feature(ctx, cfg) is True and win is not None and state is not None:
-                state.mark(name, win)
+            if feature(ctx, cfg) is True and mark is not None and state is not None:
+                state.mark(name, mark)
         except Stopped:
             raise
         except Exception:

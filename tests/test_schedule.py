@@ -24,3 +24,13 @@ def test_unreadable_state_file_starts_empty(tmp_path):
     p = tmp_path / "state.json"
     p.write_text("{not json", encoding="utf-8")
     assert not schedule.State(p).done("arena", "x")
+
+
+def test_due_when_never_claimed_or_the_interval_has_passed():
+    now = datetime(2026, 11, 14, 13, 0)
+    assert schedule.due(None, 6, now)
+    assert schedule.due("2026-11-14T06:59:00", 6, now)
+    assert not schedule.due("2026-11-14T07:01:00", 6, now)
+    assert schedule.due("2026-11-14 07", 6, now)  # an old window name counts as that hour
+    assert not schedule.due("2026-11-14 08", 6, now)
+    assert schedule.due("junk", 6, now)

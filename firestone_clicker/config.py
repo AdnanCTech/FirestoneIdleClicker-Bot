@@ -48,8 +48,8 @@ class Config:
     arena_run_at: list[int] = field(default_factory=lambda: [1, 13])
     pickaxes_run_at: list[int] = field(default_factory=lambda: [1, 13])
     daily_missions_run_at: list[int] = field(default_factory=lambda: [1, 13])
-    campaign_loot_run_at: list[int] = field(default_factory=lambda: [1, 7, 13, 19])
-    engineer_run_at: list[int] = field(default_factory=lambda: [1, 7, 13, 19])
+    campaign_loot_every_h: int = 6
+    engineer_every_h: int = 6
     market_run_at: list[int] = field(default_factory=lambda: [1, 13])
     oracle_gift_run_at: list[int] = field(default_factory=lambda: [1, 13])
 
@@ -65,6 +65,17 @@ def _hours(data: dict, section: str, default: list[int]) -> list[int]:
     hours = [int(h) for h in data.get(section, {}).get("run_at", default)]
     if not hours or any(not 0 <= h <= 23 for h in hours):
         raise ValueError(f"{section}.run_at must list hours 0 to 23")
+    return hours
+
+
+def _every(data: dict, section: str, default: int) -> int:
+    section_data = data.get(section, {})
+    unknown = set(section_data) - {"every_h"}
+    if unknown:
+        raise ValueError(f"unknown key [{section}] {sorted(unknown)[0]}")
+    hours = int(section_data.get("every_h", default))
+    if not 1 <= hours <= 168:
+        raise ValueError(f"{section}.every_h must be 1 to 168 hours")
     return hours
 
 
@@ -90,8 +101,8 @@ def load(path: Path) -> Config:
     cfg.arena_run_at = _hours(data, "arena", cfg.arena_run_at)
     cfg.pickaxes_run_at = _hours(data, "pickaxes", cfg.pickaxes_run_at)
     cfg.daily_missions_run_at = _hours(data, "daily_missions", cfg.daily_missions_run_at)
-    cfg.campaign_loot_run_at = _hours(data, "campaign_loot", cfg.campaign_loot_run_at)
-    cfg.engineer_run_at = _hours(data, "engineer", cfg.engineer_run_at)
+    cfg.campaign_loot_every_h = _every(data, "campaign_loot", cfg.campaign_loot_every_h)
+    cfg.engineer_every_h = _every(data, "engineer", cfg.engineer_every_h)
     cfg.market_run_at = _hours(data, "market", cfg.market_run_at)
     cfg.oracle_gift_run_at = _hours(data, "oracle_gift", cfg.oracle_gift_run_at)
     return cfg

@@ -30,7 +30,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (132 tests, ~12 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (135 tests, ~12 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -52,6 +52,9 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
   hours, `schedule.window` names the window (latest hour at or before now, crossing midnight),
   `State` keeps finished windows in `state.json` next to the exe (git-ignored). The feature
   returns True when it is done for the window; False retries next cycle. `--once` ignores it.
+  Loot and engineer have a cooldown that starts at the claim, so they are in `loop.INTERVAL`
+  instead: `State` stores the claim time (ISO) and `schedule.due` runs them again `every_h`
+  hours later (an old window name parses as that hour; junk counts as due).
 
 ## Rules learned the hard way
 - Logical coords == screen coords only when the client origin is (0,31); `LiveCtx.offset`
@@ -140,13 +143,13 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - Campaign loot (`features/campaign_loot.py`): the "Next loot" chest bottom left of the Campaign
   map fills every 6 h and does not stack. Its Claim is grey while the timer runs (green state
   not yet seen, assumed `GREEN_BUTTON` in `CL_CLAIM_BAND`); the click claims with no popup.
-  `[campaign_loot] run_at` defaults to every 6 h and a window is done only once it claimed,
-  so the feature retries every cycle inside a window until the chest is ready.
+  `[campaign_loot] every_h` (default 6) counts from the last claim; until the chest is claimed
+  the feature retries every cycle, so a few minutes of drift per claim is all that is lost.
 
 - Engineer tools (`features/engineer.py`, town > Engineer > left card): the "Tools production"
   Claim (`ENG_CLAIM_BAND`) is grey with a countdown while its 6 h timer runs; green unseen,
   assumed `GREEN_BUTTON`. `ENG_OPEN` probes the effects panel's beige at the far right (the
-  Engineer popup's own cream is within 20 of it further left). Same window/retry rule as loot.
+  Engineer popup's own cream is within 20 of it further left). Same `every_h` rule as loot.
 
 - Market (`features/market.py`, main screen right edge): tab 1 opens by itself with the free
   Mystery box (green Free, `green_boxes` in `MARKET_FREE_BAND`; grey "Claimed" + countdown

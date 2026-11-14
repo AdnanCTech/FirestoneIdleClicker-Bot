@@ -128,3 +128,24 @@ def test_once_ignores_the_schedule(monkeypatch, tmp_path):
 
     loop.run_cycle(FakeCtx([_home_ok()] * 5), Config(), only="arena", state=state, now=lambda: datetime(2026, 11, 11, 13, 5))
     assert calls == ["arena"]
+
+
+def test_interval_feature_waits_every_h_from_the_claim(monkeypatch, tmp_path):
+    from datetime import datetime, timedelta
+
+    from firestone_clicker import schedule
+
+    calls = []
+    results = iter([False, True, True])
+    monkeypatch.setattr(loop, "FEATURES", [("engineer", lambda c, f: (calls.append(1), next(results))[1])])
+    cfg = Config()
+    cfg.features["engineer"] = True
+    cfg.engineer_every_h = 6
+    state = schedule.State(tmp_path / "state.json")
+    t0 = datetime(2026, 11, 14, 6, 55)
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: t0)  # grey: retry
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: t0 + timedelta(minutes=3))  # claimed
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: t0 + timedelta(hours=6))  # too early
+    assert len(calls) == 2
+    loop.run_cycle(FakeCtx([_home_ok()] * 5), cfg, state=state, now=lambda: t0 + timedelta(hours=6, minutes=4))
+    assert len(calls) == 3

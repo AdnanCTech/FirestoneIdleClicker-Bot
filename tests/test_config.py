@@ -51,3 +51,16 @@ def test_arena_run_at_hours(tmp_path):
         pass
     else:
         raise AssertionError("hour 24 accepted")
+
+
+def test_every_h_for_loot_and_engineer(tmp_path):
+    p = tmp_path / "settings.toml"
+    p.write_text("[campaign_loot]\nevery_h = 8\n[engineer]\nevery_h = 6\n", encoding="utf-8")
+    cfg = config.load(p)
+    assert cfg.campaign_loot_every_h == 8 and cfg.engineer_every_h == 6
+    p.write_text("[engineer]\nevery_h = 0\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        config.load(p)
+    p.write_text("[engineer]\nrun_at = [1]\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        config.load(p)
