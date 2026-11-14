@@ -30,7 +30,7 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - `uv run python -m firestone_clicker` loops until Win+Esc or Ctrl+C. `--once <feature>` runs one
   feature, `--dry-run` runs one cycle with input disabled. Logs to terminal and `bot.log`,
   failure captures to `diag/`. Exit code 1 means it gave up (window lost or stuck).
-- `uv run pytest -q` (135 tests, ~12 s). Tests paint fake screens; no game needed.
+- `uv run pytest -q` (137 tests, ~12 s). Tests paint fake screens; no game needed.
 - `uv run python tools/probe_check.py` prints FOUND/missing for every atlas probe on the live
   screen and draws them on `diag/probe_check.png`. `tools/smoke.py` checks window + capture.
 - Game must be running. The bot finds `Firestone.exe`, maximizes it and waits until the client
@@ -154,8 +154,10 @@ ledger of decisions: `docs/superpowers/plans/2026-11-04-firestone-clicker.md`, `
 - Market (`features/market.py`, main screen right edge): tab 1 opens by itself with the free
   Mystery box (green Free, `green_boxes` in `MARKET_FREE_BAND`; grey "Claimed" + countdown
   after) beside a $4.99 orange bundle. The last tab (calendar, `MARKET_CHECKIN_TAB`, confirmed
-  by its yellow page arrow `MARKET_CHECKIN_OPEN`) has "Check In" in a lighter green gradient
-  that `GREEN_BUTTON` misses, so it is matched with `MARKET_CHECKIN_BUTTON`. Neither click opens
+  by the lavender of the selected tab `MARKET_CHECKIN_OPEN`; never by a page arrow, week 1 has
+  no left one and the calendar pages itself) has "Check In" in a lighter green gradient
+  that `GREEN_BUTTON` misses, so it is matched with `MARKET_CHECKIN_BUTTON`. A "Double up" deal
+  banner pushes the button 65 px down, so `MARKET_CHECKIN_BAND` covers both. Neither click opens
   a popup. The Market X is `BIG_CLOSE`. Once per `[market] run_at` window (default 1, 13).
 
 - Oracle's gift (`features/oracle_gift.py`, town > Oracle > Market tab): same layout as the

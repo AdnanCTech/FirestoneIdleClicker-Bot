@@ -413,8 +413,11 @@ MARKET_OPEN = Probe(290, 206, 310, 226, 0x7E82EC, 20, "market_open")  # lavender
 MARKET_FREE_BAND = (540, 840, 810, 910)
 MARKET_FREE_MIN_W = 150
 MARKET_CHECKIN_TAB = Point(1385, 126)
-MARKET_CHECKIN_OPEN = Probe(585, 571, 615, 591, 0xF2C65A, 25, "market_checkin_open")  # yellow page arrow
-MARKET_CHECKIN_BAND = (1240, 805, 1450, 865)
+# The selected tab is lavender, the others brown. Not a page arrow: week 1 has no left arrow
+# (2026-11-14, the probe on it failed every cycle after the 28-day calendar restarted).
+MARKET_CHECKIN_OPEN = Probe(1328, 111, 1342, 141, 0xAAAEE7, 20, "market_checkin_open")
+# Check In sits at y 816..857, or 65 px lower while a "Double up" deal banner is shown.
+MARKET_CHECKIN_BAND = (1240, 805, 1450, 930)
 MARKET_CHECKIN_BUTTON = 0x45981F
 MARKET_CHECKIN_MIN_W = 100
 

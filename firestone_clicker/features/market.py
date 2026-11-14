@@ -43,6 +43,9 @@ def run(ctx: Ctx, cfg: Config) -> bool:
     elif nav.safe_click(ctx, _centre(button), button, 1500):
         ctx.log("market: free box claimed")
     if not nav.require_screen(ctx, atlas.MARKET_CHECKIN_TAB, atlas.MARKET_CHECKIN_OPEN):
+        save = getattr(ctx, "save_png", None)
+        if save is not None:
+            save("diag/market_no_calendar.png")
         nav.big_close(ctx)
         return False
     button = checkin_button(ctx)

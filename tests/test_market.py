@@ -22,13 +22,14 @@ def _tab1(claimable=True):
     return s
 
 
-def _calendar(claimable=True):
+def _calendar(claimable=True, dy=0):
+    """dy 65 = the deal-banner layout seen on week 1, live 2026-11-14 (no left page arrow either)."""
     s = blank()
     paint(s, atlas.DIALOG_CLOSE_X.rect, 0xFFF9CE)
     paint(s, atlas.MARKET_OPEN.rect, 0x7E82EC)
-    paint(s, atlas.MARKET_CHECKIN_OPEN.rect, 0xF2C65A)
-    paint(s, CHECKIN, 0x45981F if claimable else 0xBBB9BB)
-    paint(s, (1320, 830, 1370, 845), 0xFFFFFF)
+    paint(s, atlas.MARKET_CHECKIN_OPEN.rect, 0xAAAEE7)
+    paint(s, (CHECKIN[0], CHECKIN[1] + dy, CHECKIN[2], CHECKIN[3] + dy), 0x45981F if claimable else 0xBBB9BB)
+    paint(s, (1320, 830 + dy, 1370, 845 + dy), 0xFFFFFF)
     return s
 
 
@@ -36,8 +37,8 @@ def _free_clicks(c):
     return [p for p in c.clicks if 551 <= p[0] <= 796 and 850 <= p[1] <= 901]
 
 
-def _checkin_clicks(c):
-    return [p for p in c.clicks if 1258 <= p[0] <= 1430 and 816 <= p[1] <= 857]
+def _checkin_clicks(c, dy=0):
+    return [p for p in c.clicks if 1258 <= p[0] <= 1430 and 816 + dy <= p[1] <= 857 + dy]
 
 
 def test_claims_free_box_and_checks_in():
@@ -47,6 +48,19 @@ def test_claims_free_box_and_checks_in():
     assert (1860, 601) in c.clicks and (1385, 126) in c.clicks
     assert len(_free_clicks(c)) == 1 and len(_checkin_clicks(c)) == 1
     assert "market: free box claimed" in c.logs and "market: checked in" in c.logs
+
+
+def test_checks_in_on_the_deal_banner_layout():
+    c = FakeCtx([_main(), _tab1(False), _calendar(dy=65), _calendar(False, dy=65)] + [_main()] * 10)
+    assert market.run(c, Config()) is True
+    assert len(_checkin_clicks(c, dy=65)) == 1
+    assert "market: checked in" in c.logs
+
+
+def test_calendar_is_recognised_without_a_page_arrow():
+    c = FakeCtx([_main(), _tab1(False), _calendar(False, dy=65)] + [_main()] * 10)
+    assert market.run(c, Config()) is True
+    assert "market: already checked in" in c.logs
 
 
 def test_already_claimed_is_left_alone_but_counts_as_done():
